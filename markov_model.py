@@ -203,3 +203,32 @@ def years_to_threshold(C: float, lam2: float, thr: float) -> int:
     return max(0, math.ceil(math.log(thr / C) / math.log(lam2)))
 
 
+# ----------------------------------------------------------------------------------------------
+# Sensitivity
+# ----------------------------------------------------------------------------------------------
+def perturb(P: np.ndarray, rel: float, rng: np.random.Generator) -> np.ndarray:
+    """Multiply each entry by U[1-rel, 1+rel] and renormalise columns."""
+    Q = P * rng.uniform(1 - rel, 1 + rel, size=P.shape)
+    return Q / Q.sum(axis=0, keepdims=True)
+
+
+def sensitivity(P: np.ndarray, n_runs: int = 1000, rel: float = 0.02, seed: int = 42):
+    rng = np.random.default_rng(seed)
+    shares = np.zeros((n_runs, P.shape[0]))
+    lam2 = np.zeros(n_runs)
+    for t in range(n_runs):
+        Q = perturb(P, rel, rng)
+        shares[t] = steady_state_eig(Q)
+        lam2[t] = second_eigenvalue_modulus(Q)
+    return shares, lam2
+
+
+def replace_column(P: np.ndarray, col: int, new_col) -> np.ndarray:
+    """Return a copy of P with one column replaced, checking it is still a probability vector."""
+    M = np.array(P, dtype=float)
+    M[:, col] = new_col
+    if abs(M[:, col].sum() - 1) > 1e-12 or (M[:, col] < 0).any():
+        raise ValueError(f"new column {col} is not a probability vector (sum = {M[:, col].sum()})")
+    return M
+
+
