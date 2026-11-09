@@ -1,0 +1,69 @@
+
+==============================================================================
+1. CAN THE SIMULATED P EXPLAIN THE CENSUS?  (calibration 2001 -> 2011)
+==============================================================================
+With the simulated P at full strength, the immigration needed to reproduce Census 2011 is:
+   Delhi 727,513/yr, Gurugram -210,414/yr, Noida -192,075/yr, Faridabad 19,253/yr
+[FINDING] Negative immigration is impossible, so the simulated P moves too many people
+          out of Delhi each year (2% to Gurugram = ~335,000 people/yr, i.e. +22% of Gurugram).
+Fix: scale mobility, P_alpha = I + alpha (P - I) (same steady state, slower), and find the
+largest alpha for which every m_i >= 0.
+
+   alpha* = 0.1373  ->  the data support about 14% of the simulated mobility
+   calibrated immigration m = Delhi 293,386/yr, Gurugram 21,143/yr, Noida 0/yr, Faridabad 31,852/yr
+   total net immigration into the 4 districts = 346,381 people / year
+[PASS] P_alpha is still column-stochastic
+[PASS] P_alpha has the same steady state as P
+[PASS] eigenvalues of P_alpha are 1 + alpha (lambda - 1)
+[PASS] Calibrated immigration is non-negative
+[PASS] Back-cast 2001 -> 2011 reproduces Census 2011 exactly
+
+==============================================================================
+2. HOMOGENEOUS COORDINATES AND CLOSED-FORM SOLUTION
+==============================================================================
+B = [[A, m],[0, 1]] =
+[[     0.99764      0.00826      0.00826      0.00964 293385.69788]
+ [     0.00277      0.9905       0.00414      0.00415  21143.1967 ]
+ [     0.00278      0.00416      0.99519      0.00278      0.11809]
+ [     0.00138      0.00276      0.00276      0.99012  31852.18045]
+ [     0.           0.           0.           0.           1.     ]]
+[PASS] Linear 5x5 iteration with B equals affine iteration x -> A x + m
+[PASS] eig(B) = eig(A) together with 1 (block-triangular)
+[PASS] Closed form x_k = A^k (x_0 - x*) + x* matches iteration
+
+==============================================================================
+3. LONG-RUN BEHAVIOUR (Perron-Frobenius)
+==============================================================================
+[PASS] A > 0, so its dominant eigenvector is strictly positive
+rho(A) = 1.006258  ->  long-run growth 0.626% per year
+Long-run shares (Perron vector of A): Delhi 49.84%, Gurugram 17.37%, Noida 21.81%, Faridabad 10.98%
+Closed-model steady state for comparison: Delhi 55.48%, Gurugram 17.47%, Noida 16.73%, Faridabad 10.32%
+rho >= 1: the population does NOT settle; x* is not an attractor, shares tend to the Perron vector.
+
+==============================================================================
+4. FORECAST 2011 -> 2041
+==============================================================================
+ Year   Delhi Gurugram  Noida Faridabad   Total
+ 2011 16.79 M   1.51 M 1.65 M    1.81 M 21.76 M
+ 2016 18.28 M   1.86 M 1.91 M    2.04 M 24.09 M
+ 2021 19.80 M   2.22 M 2.19 M    2.28 M 26.49 M
+ 2026 21.33 M   2.59 M 2.50 M    2.53 M 28.95 M
+ 2031 22.89 M   2.98 M 2.84 M    2.78 M 31.49 M
+ 2036 24.47 M   3.38 M 3.20 M    3.05 M 34.10 M
+ 2041 26.08 M   3.80 M 3.59 M    3.32 M 36.78 M
+[PASS] x_K = A^K x_0 + S_K m (decomposition of growth)
+
+Of the 36.78 M people in 2041: 25.60 M descend from the 2011 residents, 11.18 M from immigration after 2011.
+
+==============================================================================
+5. WHAT-IF: sensitivity of the 2041 forecast
+==============================================================================
+  Baseline               total 2041:  36.78 M   shares  70.9%  10.3%   9.7%   9.0%
+  Emigration x2          total 2041:  31.23 M   shares  71.9%  10.0%   9.2%   8.9%
+  Natural growth -30%    total 2041:  33.64 M   shares  71.6%  10.2%   9.3%   8.9%
+  Immigration +50%       total 2041:  42.37 M   shares  71.9%  10.1%   9.0%   9.1%
+  Immigration stops      total 2041:  25.60 M   shares  67.6%  11.1%  12.3%   8.9%
+
+==============================================================================
+CHECKS PASSED: 10   DESIGN WARNINGS: 0
+==============================================================================
