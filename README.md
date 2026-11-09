@@ -17,7 +17,7 @@ A = diag(1+g) P diag(1-e)
 pip install -r requirements.txt
 python project_code.py        # closed model  -> figures/fig1..9, results/results.json|txt
 python open_system.py         # open model    -> figures/fig10..12 (calibration, forecast, growth decomposition), results/open_system.json|txt
-python -m pytest -q           # 27 tests
+python -m pytest -q           # 31 tests
 ```
 Add `--no-figures` for a fast run. Open `docs/index.html` in a browser for the interactive dashboard
 (edit P, switch closed/open, watch the steady state, eigenvalues and projection update).
