@@ -232,3 +232,76 @@ def replace_column(P: np.ndarray, col: int, new_col) -> np.ndarray:
     return M
 
 
+# ----------------------------------------------------------------------------------------------
+# Open system:  x_{k+1} = A x_k + m,   A = G M
+# ----------------------------------------------------------------------------------------------
+def open_system_matrix(P: np.ndarray, emigration: np.ndarray, growth: np.ndarray) -> np.ndarray:
+    """A = G M where
+         M = P diag(1 - e)   (column j: a fraction e_j leaves NCR, the rest moves according to P)
+         G = diag(1 + g)     (natural growth: births - deaths, applied after moving).
+    A is non-negative but no longer stochastic: column sums of M are 1 - e_j < 1."""
+    e = np.asarray(emigration, dtype=float)
+    g = np.asarray(growth, dtype=float)
+    if ((e < 0) | (e >= 1)).any():
+        raise ValueError("emigration rates must lie in [0, 1)")
+    if (g <= -1).any():
+        raise ValueError("growth rates must exceed -100 %")
+    return np.diag(1 + g) @ P @ np.diag(1 - e)
+
+
+def homogeneous_matrix(A: np.ndarray, m: np.ndarray) -> np.ndarray:
+    """Augmented (n+1)x(n+1) matrix B = [[A, m], [0, 1]] so that [x_{k+1}; 1] = B [x_k; 1].
+    This turns the AFFINE update x -> A x + m into a purely LINEAR one (same trick as in graphics)."""
+    n = A.shape[0]
+    B = np.zeros((n + 1, n + 1))
+    B[:n, :n] = A
+    B[:n, n] = m
+    B[n, n] = 1.0
+    return B
+
+
+def project_open(A: np.ndarray, m: np.ndarray, x0: np.ndarray, K: int) -> np.ndarray:
+    X = np.zeros((K + 1, len(x0)))
+    X[0] = x0
+    for k in range(K):
+        X[k + 1] = A @ X[k] + m
+    return X
+
+
+def geometric_sum(A: np.ndarray, K: int) -> np.ndarray:
+    """S_K = I + A + ... + A^(K-1)."""
+    n = A.shape[0]
+    S, Ak = np.zeros((n, n)), np.eye(n)
+    for _ in range(K):
+        S += Ak
+        Ak = Ak @ A
+    return S
+
+
+def calibrate_immigration(A: np.ndarray, x_start: np.ndarray, x_end: np.ndarray, years: int) -> np.ndarray:
+    """Solve for the constant yearly immigration m that carries x_start to x_end in `years` steps:
+
+        x_end = A^K x_start + S_K m     =>    S_K m = x_end - A^K x_start
+
+    A 4x4 linear system, solved with our own Gaussian elimination."""
+    rhs = x_end - np.linalg.matrix_power(A, years) @ x_start
+    return gauss_solve(geometric_sum(A, years), rhs)
+
+
+def perron(A: np.ndarray):
+    """Dominant eigenvalue rho and its eigenvector (normalised to sum 1) of a non-negative matrix.
+    Perron-Frobenius: for a positive matrix rho is real, simple, and its eigenvector is positive."""
+    w, V = np.linalg.eig(A)
+    i = int(np.argmax(abs(w)))
+    v = V[:, i] / V[:, i].sum()
+    return float(w[i].real), v.real
+
+
+def affine_fixed_point(A: np.ndarray, m: np.ndarray) -> np.ndarray | None:
+    """x* = (I - A)^-1 m if rho(A) < 1 (population settles); None if rho(A) >= 1 (it keeps growing)."""
+    rho, _ = perron(A)
+    if rho >= 1:
+        return None
+    return np.linalg.solve(np.eye(A.shape[0]) - A, m)
+
+
