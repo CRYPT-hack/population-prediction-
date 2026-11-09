@@ -1,21 +1,21 @@
 # Group 14 – Predicting Population Movement Using Transition Matrices
 MTH2802 Linear Algebra & Differential Equations · BML Munjal University · Instructor: Dr. Luckshay Batra
 
-## How to run
-```
-pip install numpy pandas matplotlib seaborn      # networkx is not needed
-python project_code.py
-```
-Python 3.9+ recommended. Running creates/overwrites `figures/` (9 PNGs, 200 dpi), `results.json` and `results.txt` next to the script. The random seed is fixed (42), so results are reproducible. If a check fails, the script stops with an `AssertionError`.
+This folder holds the written submission, **updated** to match the fixed and extended code in the repository root.
+The version originally handed in is preserved in git: `git checkout v1.0-submission -- submission/`.
 
-**Edit inputs** at the top of `project_code.py`: the dictionary `INITIAL_POPULATION` (approximate Census 2011 figures, to be verified) and the matrix `P` (SIMULATED probabilities).
+## Files
+1. `Group14_Report.docx` / `.pdf` – the report (22 pages). Sections 1–6 closed model, Section 7 open-system extension, Appendix A core code, Appendix B hand calculations.
+2. `Group14_Slides.pptx` – 10-slide presentation (slides 7–8 cover the census test and the open model).
+3. `Group14_Viva_Prep.md` – one-page summary, 32 Q&A, numbers to remember, section talking points.
+4. `project_code.py`, `results.json`, `results.txt`, `figures/` – the **original** script and its outputs, kept for comparison. Use `../project_code.py` and `../open_system.py` to reproduce the report.
 
-## File guide
-1. `project_code.py` – all computations, assertions and figures.
-2. `results.json` / `results.txt` – every number used in the report (machine-readable / readable log with the assertion log).
-3. `figures/` – fig1–fig9 (heat map, flow diagram, time series, steady state, convergence, starts, scenarios, sensitivity, eigenvalues).
-4. `Group14_Report.docx` (+ `.pdf`) – the report; `Group14_Viva_Prep.md` – viva summary, 25 Q&A, numbers to remember, section talking points.
-5. `Group14_Slides.pptx` – 8-slide presentation.
+## What changed since the original submission
+* Census 2011 populations for Gurugram (1,514,432) and Noida (1,648,115) corrected; projections, hand calculation and coefficients updated.
+* Convergence theory computed from the eigen-decomposition (33 / 52 years) instead of fitted from the simulation.
+* Figures regenerated; Figure 9 now in the complex plane.
+* New Section 7 / slides 7–8: open model with births, deaths and migration, calibrated to Census 2001 → 2011.
+* See `../BUGFIXES.md` for the code-level fixes.
 
 ## Honesty note
-Transition probabilities are **simulated**. Initial populations are **approximate** Census 2011 figures and must be verified by the group.
+Transition probabilities and emigration rates are **simulated**. Populations are Census 2011 (and 2001) district totals; natural growth is SRS 2020 at state level.

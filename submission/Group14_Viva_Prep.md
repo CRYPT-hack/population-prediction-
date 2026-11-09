@@ -16,6 +16,8 @@ We diagonalised P = V D V⁻¹. The eigenvalues are 1.0000, 0.8862, 0.8638, 0.86
 
 Different starting points reach the same steady state. Two scenarios (Faridabad infrastructure; Gurugram/Noida job boom) change the steady state a lot, while ±2% random errors change it by at most 1.20 percentage points. Limits: closed system, constant P, memoryless, simulated data.
 
+Finally we opened the system: births and deaths (SRS 2020), people leaving the NCR and people arriving, x_(k+1) = A x_k + m. Fitting the arrivals to Census 2001 and 2011 showed that our simulated P moves about seven times too many people (α = 0.137). The open model gives about 36.8 million people in the four districts by 2041.
+
 ---
 ## Part 2 – 32 likely viva questions with model answers
 
