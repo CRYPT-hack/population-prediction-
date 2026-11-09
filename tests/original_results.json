@@ -1,0 +1,863 @@
+{
+  "P": [
+    [
+      0.95,
+      0.06,
+      0.06,
+      0.07
+    ],
+    [
+      0.02,
+      0.89,
+      0.03,
+      0.03
+    ],
+    [
+      0.02,
+      0.03,
+      0.89,
+      0.02
+    ],
+    [
+      0.01,
+      0.02,
+      0.02,
+      0.88
+    ]
+  ],
+  "regions": [
+    "Delhi",
+    "Gurugram",
+    "Noida",
+    "Faridabad"
+  ],
+  "retention": {
+    "Delhi": 0.95,
+    "Gurugram": 0.89,
+    "Noida": 0.89,
+    "Faridabad": 0.88
+  },
+  "column_sums": [
+    1.0,
+    1.0,
+    1.0,
+    1.0
+  ],
+  "smallest_k_regular": 1,
+  "initial_population_approx_census2011": {
+    "Delhi": 16787941,
+    "Gurugram": 1514085,
+    "Noida": 1674714,
+    "Faridabad": 1809733
+  },
+  "total_population": 21786473,
+  "initial_share": [
+    0.770567,
+    0.069497,
+    0.076869,
+    0.083067
+  ],
+  "hand_example": {
+    "region": "Gurugram",
+    "row_of_P": [
+      0.02,
+      0.89,
+      0.03,
+      0.03
+    ],
+    "x0": [
+      16787941.0,
+      1514085.0,
+      1674714.0,
+      1809733.0
+    ],
+    "terms": [
+      335758.8,
+      1347535.6,
+      50241.4,
+      54292.0
+    ],
+    "x1_value": 1787827.9
+  },
+  "projection_k": [
+    0,
+    1,
+    2,
+    5,
+    10,
+    20,
+    30
+  ],
+  "projection_counts": {
+    "0": [
+      16787941,
+      1514085,
+      1674714,
+      1809733
+    ],
+    "1": [
+      16266553,
+      1787828,
+      1907871,
+      1824220
+    ],
+    "2": [
+      15802663,
+      2028461,
+      2113456,
+      1841893
+    ],
+    "5": [
+      14696386,
+      2589839,
+      2595438,
+      1904811
+    ],
+    "10": [
+      13532662,
+      3157162,
+      3085853,
+      2010797
+    ],
+    "20": [
+      12528941,
+      3618544,
+      3485929,
+      2153059
+    ],
+    "30": [
+      12221876,
+      3750675,
+      3599354,
+      2214569
+    ]
+  },
+  "projection_shares": {
+    "0": [
+      0.770567,
+      0.069497,
+      0.076869,
+      0.083067
+    ],
+    "1": [
+      0.746635,
+      0.082061,
+      0.087571,
+      0.083732
+    ],
+    "2": [
+      0.725343,
+      0.093106,
+      0.097008,
+      0.084543
+    ],
+    "5": [
+      0.674565,
+      0.118874,
+      0.119131,
+      0.087431
+    ],
+    "10": [
+      0.62115,
+      0.144914,
+      0.141641,
+      0.092296
+    ],
+    "20": [
+      0.575079,
+      0.166091,
+      0.160004,
+      0.098826
+    ],
+    "30": [
+      0.560985,
+      0.172156,
+      0.16521,
+      0.101649
+    ]
+  },
+  "matrix_powers": {
+    "P^2": [
+      [
+        0.9056,
+        0.1136,
+        0.1136,
+        0.1311
+      ],
+      [
+        0.0377,
+        0.7948,
+        0.0552,
+        0.0551
+      ],
+      [
+        0.0376,
+        0.055,
+        0.7946,
+        0.0377
+      ],
+      [
+        0.0191,
+        0.0366,
+        0.0366,
+        0.7761
+      ]
+    ],
+    "P^5": [
+      [
+        0.80009,
+        0.242365,
+        0.242365,
+        0.271684
+      ],
+      [
+        0.079509,
+        0.579254,
+        0.108827,
+        0.108169
+      ],
+      [
+        0.07872,
+        0.10738,
+        0.577807,
+        0.079378
+      ],
+      [
+        0.041682,
+        0.071001,
+        0.071001,
+        0.540769
+      ]
+    ],
+    "P^10": [
+      [
+        0.689817,
+        0.37962,
+        0.37962,
+        0.409745
+      ],
+      [
+        0.122745,
+        0.374172,
+        0.15287,
+        0.151391
+      ],
+      [
+        0.120314,
+        0.14896,
+        0.370261,
+        0.121793
+      ],
+      [
+        0.067124,
+        0.097249,
+        0.097249,
+        0.317072
+      ]
+    ],
+    "P^50": [
+      [
+        0.555948,
+        0.553278,
+        0.553278,
+        0.554045
+      ],
+      [
+        0.174237,
+        0.175535,
+        0.175004,
+        0.174843
+      ],
+      [
+        0.166969,
+        0.167574,
+        0.168105,
+        0.16713
+      ],
+      [
+        0.102846,
+        0.103613,
+        0.103613,
+        0.103983
+      ]
+    ]
+  },
+  "power_column_spread": {
+    "P^2": 0.7919999999999999,
+    "P^5": 0.5577243849999999,
+    "P^10": 0.31019690623921226,
+    "P^50": 0.002670369204669676
+  },
+  "steady_state": {
+    "eigenvector": [
+      0.5548387097,
+      0.1746543779,
+      0.167281106,
+      0.1032258065
+    ],
+    "linear_system": [
+      0.5548387097,
+      0.1746543779,
+      0.167281106,
+      0.1032258065
+    ],
+    "P200": [
+      0.5548387097,
+      0.1746543779,
+      0.167281106,
+      0.1032258064
+    ],
+    "max_abs_difference": 1.5168533096243664e-11
+  },
+  "steady_state_counts": [
+    12087979,
+    3805103,
+    3644465,
+    2248926
+  ],
+  "eigenvalues": [
+    1.0,
+    0.88618034,
+    0.86381966,
+    0.86
+  ],
+  "eigenvectors_V": [
+    [
+      0.554839,
+      0.861453,
+      0.175002,
+      -0.0
+    ],
+    [
+      0.174654,
+      -0.329046,
+      -0.45816,
+      0.707107
+    ],
+    [
+      0.167281,
+      -0.203362,
+      0.741319,
+      -0.707107
+    ],
+    [
+      0.103226,
+      -0.329046,
+      -0.45816,
+      0.0
+    ]
+  ],
+  "V_inverse": [
+    [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    [
+      0.55144,
+      -0.807682,
+      -0.807682,
+      -0.288544
+    ],
+    [
+      -0.170734,
+      0.805374,
+      0.805374,
+      -1.750109
+    ],
+    [
+      -0.101015,
+      1.313198,
+      -0.101015,
+      -1.515229
+    ]
+  ],
+  "D": [
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.88618034,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.86381966,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.86
+    ]
+  ],
+  "reconstruction_error": 4.440892098500626e-16,
+  "P10_error": 4.9960036108132044e-15,
+  "x0_coefficients": [
+    1.0,
+    0.282736,
+    -0.159058,
+    -0.120206
+  ],
+  "eigenvalue_powers_k30": [
+    1.00000000000002,
+    0.0266479206462147,
+    0.01237919843506803,
+    0.010838109570574076
+  ],
+  "P10_direct": [
+    [
+      0.689817,
+      0.37962,
+      0.37962,
+      0.409745
+    ],
+    [
+      0.122745,
+      0.374172,
+      0.15287,
+      0.151391
+    ],
+    [
+      0.120314,
+      0.14896,
+      0.370261,
+      0.121793
+    ],
+    [
+      0.067124,
+      0.097249,
+      0.097249,
+      0.317072
+    ]
+  ],
+  "lambda2_abs": 0.8861803398874988,
+  "slowest_mode_halflife_years": 5.736320585967634,
+  "convergence": {
+    "d0": 0.43145693497594306,
+    "C_fit": 0.4537354278644569,
+    "years_to_1pct_actual": 32,
+    "years_to_0.1pct_actual": 51,
+    "years_to_1pct_theory": 32,
+    "years_to_0.1pct_theory": 51,
+    "d_at_k": {
+      "0": 0.43145693497594306,
+      "1": 0.3835934923709835,
+      "2": 0.34100832792513674,
+      "5": 0.23945198499261477,
+      "10": 0.13262203929045885,
+      "20": 0.04048041051868591,
+      "30": 0.012291782721472716
+    }
+  },
+  "multi_start": {
+    "Census-based (approx.)": {
+      "start": [
+        0.770567,
+        0.069497,
+        0.076869,
+        0.083067
+      ],
+      "after_120": [
+        0.55483883,
+        0.17465433,
+        0.16728108,
+        0.10322576
+      ]
+    },
+    "All in Delhi": {
+      "start": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "after_120": [
+        0.55483895,
+        0.17465429,
+        0.16728105,
+        0.10322572
+      ]
+    },
+    "Uniform (25% each)": {
+      "start": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "after_120": [
+        0.55483856,
+        0.17465443,
+        0.16728114,
+        0.10322586
+      ]
+    },
+    "All in Faridabad": {
+      "start": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "after_120": [
+        0.55483858,
+        0.17465443,
+        0.16728112,
+        0.10322587
+      ]
+    }
+  },
+  "scenarios": {
+    "Baseline": {
+      "P": [
+        [
+          0.95,
+          0.06,
+          0.06,
+          0.07
+        ],
+        [
+          0.02,
+          0.89,
+          0.03,
+          0.03
+        ],
+        [
+          0.02,
+          0.03,
+          0.89,
+          0.02
+        ],
+        [
+          0.01,
+          0.02,
+          0.02,
+          0.88
+        ]
+      ],
+      "steady_state": [
+        0.554839,
+        0.174654,
+        0.167281,
+        0.103226
+      ],
+      "lambda2_abs": 0.8861803398874988,
+      "eigenvalues": [
+        1.0,
+        0.88618,
+        0.86382,
+        0.86
+      ],
+      "change_vs_baseline_pct_points": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "A: Faridabad infrastructure": {
+      "P": [
+        [
+          0.945,
+          0.05,
+          0.05,
+          0.045
+        ],
+        [
+          0.02,
+          0.89,
+          0.03,
+          0.02
+        ],
+        [
+          0.02,
+          0.03,
+          0.89,
+          0.015
+        ],
+        [
+          0.015,
+          0.03,
+          0.03,
+          0.92
+        ]
+      ],
+      "steady_state": [
+        0.466231,
+        0.166044,
+        0.158575,
+        0.20915
+      ],
+      "lambda2_abs": 0.90151387818866,
+      "eigenvalues": [
+        1.0,
+        0.901514,
+        0.883486,
+        0.86
+      ],
+      "change_vs_baseline_pct_points": [
+        -8.8608,
+        -0.861,
+        -0.8707,
+        10.5925
+      ]
+    },
+    "B: Gurugram/Noida job boom": {
+      "P": [
+        [
+          0.92,
+          0.04,
+          0.04,
+          0.05
+        ],
+        [
+          0.035,
+          0.92,
+          0.025,
+          0.04
+        ],
+        [
+          0.035,
+          0.025,
+          0.92,
+          0.03
+        ],
+        [
+          0.01,
+          0.015,
+          0.015,
+          0.88
+        ]
+      ],
+      "steady_state": [
+        0.341538,
+        0.284689,
+        0.275311,
+        0.098462
+      ],
+      "lambda2_abs": 0.8949999999999999,
+      "eigenvalues": [
+        1.0,
+        0.895,
+        0.875,
+        0.87
+      ],
+      "change_vs_baseline_pct_points": [
+        -21.33,
+        11.0034,
+        10.803,
+        -0.4764
+      ]
+    }
+  },
+  "sensitivity": {
+    "n_runs": 1000,
+    "perturbation": "each entry multiplied by U[0.98,1.02], columns renormalised",
+    "per_region": {
+      "Delhi": {
+        "baseline_pct": 55.48387096774192,
+        "mean_pct": 55.46592018935858,
+        "std_pct": 0.3875082041598352,
+        "min_pct": 54.35982011397782,
+        "max_pct": 56.679990810607485
+      },
+      "Gurugram": {
+        "baseline_pct": 17.465437788018452,
+        "mean_pct": 17.475390522734223,
+        "std_pct": 0.23615440404241503,
+        "min_pct": 16.738448592531764,
+        "max_pct": 18.201178709017558
+      },
+      "Noida": {
+        "baseline_pct": 16.728110599078345,
+        "mean_pct": 16.732386456016034,
+        "std_pct": 0.23042867151566218,
+        "min_pct": 15.943933459489978,
+        "max_pct": 17.493827903653017
+      },
+      "Faridabad": {
+        "baseline_pct": 10.322580645161294,
+        "mean_pct": 10.326302831891176,
+        "std_pct": 0.14365237867631186,
+        "min_pct": 9.948733283999065,
+        "max_pct": 10.741725846474237
+      }
+    },
+    "max_deviation_pct_points": 1.1961198428655617,
+    "lambda2_mean": 0.8861772462377103,
+    "lambda2_min": 0.8834703883468762,
+    "lambda2_max": 0.8894045057536121
+  },
+  "toy_2x2": {
+    "T": [
+      [
+        0.9,
+        0.2
+      ],
+      [
+        0.1,
+        0.8
+      ]
+    ],
+    "eigenvalues": [
+      1.0000000000000004,
+      0.6999999999999998
+    ],
+    "steady_state": [
+      0.6666666666666666,
+      0.3333333333333334
+    ],
+    "sequence_from_(0.5,0.5)": [
+      [
+        0.5,
+        0.5
+      ],
+      [
+        0.55,
+        0.45
+      ],
+      [
+        0.5850000000000001,
+        0.41500000000000004
+      ],
+      [
+        0.6095000000000002,
+        0.39050000000000007
+      ]
+    ],
+    "v1": [
+      2,
+      1
+    ],
+    "v2": [
+      1,
+      -1
+    ]
+  },
+  "non_regular": {
+    "absorbing_P": [
+      [
+        0.8,
+        0.1,
+        0.0
+      ],
+      [
+        0.2,
+        0.8,
+        0.0
+      ],
+      [
+        0.0,
+        0.1,
+        1.0
+      ]
+    ],
+    "absorbing_limit_from_state1": [
+      3e-06,
+      4e-06,
+      0.999993
+    ],
+    "absorbing_eigenvalues": [
+      1.0,
+      0.941421,
+      0.658579
+    ],
+    "periodic_P": [
+      [
+        0.0,
+        1.0
+      ],
+      [
+        1.0,
+        0.0
+      ]
+    ],
+    "periodic_eigenvalues": [
+      1.0,
+      -1.0
+    ]
+  },
+  "assertions_passed": [
+    "Every column of P sums to 1",
+    "Column sums equal 1 when rounded to 3 decimals",
+    "All entries of P are non-negative",
+    "All entries of P strictly positive (so P^1 > 0)",
+    "Retention (diagonal) lies in [0.88, 0.96]",
+    "Regularity: smallest k with P^k > 0 is k = 1",
+    "Hand-calculation of x_1[Gurugram] matches P @ x_0",
+    "Total population conserved after 1 step (closed system)",
+    "Total population constant for all k = 0..30",
+    "Shares sum to 1 for all k",
+    "Columns of P^50 are (almost) identical",
+    "Steady state: eigenvector method == linear-system method (<1e-8)",
+    "Steady state: eigenvector method == P^200 method (<1e-8)",
+    "Steady state: linear-system method == P^200 method (<1e-8)",
+    "P pi = pi holds",
+    "No region collapses below 5% (smallest share = 10.32%)",
+    "All eigenvalues are real",
+    "All eigenvalues are distinct",
+    "Eigenvalues separated by more than 1e-3",
+    "P = V D V^-1 reconstruction error < 1e-12",
+    "Largest eigenvalue is exactly 1 (lambda_1 = 1)",
+    "Eigenvector for lambda = 1 equals the steady state",
+    "Other eigenvectors have components summing to 0",
+    "P^10 = V D^10 V^-1 matches np.linalg.matrix_power(P,10)",
+    "x_0 = sum c_j v_j reconstruction",
+    "c1 = 1 for a share vector (total population share)",
+    "Actual convergence times agree with |lambda_2|^k theory (within 2 years)",
+    "Start 'Census-based (approx.)' converges to the steady state",
+    "Start 'All in Delhi' converges to the steady state",
+    "Start 'Uniform (25% each)' converges to the steady state",
+    "Start 'All in Faridabad' converges to the steady state",
+    "Scenario 'Baseline': valid column-stochastic, positive, retention in range",
+    "Scenario 'Baseline': eigenvalues real",
+    "Scenario 'Baseline': smallest steady share 10.32% > 5%",
+    "Scenario 'A: Faridabad infrastructure': valid column-stochastic, positive, retention in range",
+    "Scenario 'A: Faridabad infrastructure': eigenvalues real",
+    "Scenario 'A: Faridabad infrastructure': smallest steady share 15.86% > 5%",
+    "Scenario 'B: Gurugram/Noida job boom': valid column-stochastic, positive, retention in range",
+    "Scenario 'B: Gurugram/Noida job boom': eigenvalues real",
+    "Scenario 'B: Gurugram/Noida job boom': smallest steady share 9.85% > 5%",
+    "Steady-state shares stay within 3 percentage points of baseline under +/-2% perturbations (robust)",
+    "Toy 2x2: eigenvalues are 1 and 0.7",
+    "Toy 2x2: steady state is (2/3, 1/3)",
+    "Absorbing example is column-stochastic",
+    "Absorbing example is NOT regular (no power of it is strictly positive)"
+  ],
+  "note": "Transition probabilities are SIMULATED; populations are APPROXIMATE (Census 2011, to be verified).",
+  "scenario_table_rows": [
+    [
+      "Baseline",
+      "55.48",
+      "17.47",
+      "16.73",
+      "10.32",
+      "0.8862"
+    ],
+    [
+      "A: Faridabad infrastructure",
+      "46.62",
+      "16.60",
+      "15.86",
+      "20.92",
+      "0.9015"
+    ],
+    [
+      "B: Gurugram/Noida job boom",
+      "34.15",
+      "28.47",
+      "27.53",
+      "9.85",
+      "0.8950"
+    ]
+  ]
+}
