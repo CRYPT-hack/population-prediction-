@@ -5,6 +5,7 @@ from pathlib import Path
 import numpy as np
 
 import project_code
+import open_system
 
 ORIG = json.loads((Path(__file__).parent / "original_results.json").read_text())
 
@@ -34,3 +35,10 @@ def test_closed_pipeline_works_with_custom_regions(tmp_path):
                          outdir=tmp_path, quiet=True)
     assert np.allclose(np.array(P) @ R["steady_state"]["eigenvector"], R["steady_state"]["eigenvector"], atol=1e-9)
     assert len(list((tmp_path / "figures").glob("*.png"))) == 9
+
+
+def test_open_pipeline_runs(tmp_path):
+    R = open_system.run(make_figures=False, outdir=tmp_path, quiet=True)
+    assert R["design_warnings"] == []
+    total = np.array(R["forecast"]["open"]).sum(1)
+    assert (np.diff(total) > 0).all()        # growing population

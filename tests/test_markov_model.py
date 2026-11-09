@@ -82,6 +82,14 @@ def test_theoretical_convergence_constant_is_close_to_empirical():
     assert abs(d[150] / (C * lam2 ** 150) - 1) < 0.05     # asymptotically d_k ~ C |l2|^k
 
 
+def test_scale_mobility_keeps_steady_state_and_maps_eigenvalues():
+    for a in (0.1, 0.5, 0.9):
+        Pa = mm.scale_mobility(P, a)
+        mm.validate_stochastic(Pa)
+        assert np.allclose(mm.steady_state_eig(Pa), mm.steady_state_eig(P))
+        assert np.allclose(np.sort(np.linalg.eigvals(Pa).real), np.sort(1 + a * (np.linalg.eigvals(P).real - 1)))
+
+
 def test_replace_column_rejects_non_probability():
     with pytest.raises(ValueError):
         mm.replace_column(P, 0, [0.5, 0.5, 0.5, 0.0])
