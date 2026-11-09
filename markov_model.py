@@ -305,3 +305,39 @@ def affine_fixed_point(A: np.ndarray, m: np.ndarray) -> np.ndarray | None:
     return np.linalg.solve(np.eye(A.shape[0]) - A, m)
 
 
+# ----------------------------------------------------------------------------------------------
+# Calibration of mobility against the census
+# ----------------------------------------------------------------------------------------------
+def scale_mobility(P: np.ndarray, alpha: float) -> np.ndarray:
+    """P_alpha = I + alpha (P - I).  alpha = 1 gives P, alpha = 0 means nobody moves.
+
+    Columns still sum to 1 and P_alpha pi = pi for the SAME steady state pi, while every
+    eigenvalue maps to 1 + alpha (lambda - 1): less mobility -> same destination, slower journey."""
+    n = P.shape[0]
+    return np.eye(n) + alpha * (np.asarray(P, dtype=float) - np.eye(n))
+
+
+def calibrate_mobility(P, emigration, growth, x_start, x_end, years, tol=1e-6):
+    """Largest alpha in [0, 1] for which the census change x_start -> x_end can be explained
+    with NON-NEGATIVE immigration into every region (bisection; min(m) decreases with alpha).
+
+    Returns (alpha, m, A). Raises ValueError if even alpha = 0 needs negative immigration."""
+    def m_of(a):
+        A = open_system_matrix(scale_mobility(P, a), emigration, growth)
+        return calibrate_immigration(A, x_start, x_end, years), A
+
+    m1, A1 = m_of(1.0)
+    if m1.min() >= 0:
+        return 1.0, m1, A1
+    m0, _ = m_of(0.0)
+    if m0.min() < 0:
+        raise ValueError("census change needs negative immigration even with zero internal mobility")
+    lo, hi = 0.0, 1.0
+    while hi - lo > tol:
+        mid = (lo + hi) / 2
+        if m_of(mid)[0].min() >= 0:
+            lo = mid
+        else:
+            hi = mid
+    m, A = m_of(lo)
+    return lo, m, A
