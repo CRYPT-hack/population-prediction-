@@ -157,30 +157,30 @@ def figures(FIG, REG, years, X, Xc, from_x0, from_m, v, pi, alpha, m_full, m):
     for i, r in enumerate(REG):
         axs[0].plot(years, X[:, i] / 1e6, color=C[r], lw=2.2, label=f"{r} (open)")
         axs[0].plot(years, Xc[:, i] / 1e6, color=C[r], lw=1.4, ls="--")
-    axs[0].set_title("Fig 10a: Population, open (solid) vs closed (dashed)"); axs[0].set_ylabel("Millions"); axs[0].legend(fontsize=9)
+    axs[0].set_title("Fig 11a: Population, open (solid) vs closed (dashed)"); axs[0].set_ylabel("Millions"); axs[0].legend(fontsize=9)
     axs[1].plot(years, X.sum(1) / 1e6, color="k", lw=2.4, label="Open model")
     axs[1].plot(years, Xc.sum(1) / 1e6, color="gray", lw=2, ls="--", label="Closed model (constant)")
-    axs[1].set_title("Fig 10b: Total population of the four districts"); axs[1].set_ylabel("Millions"); axs[1].legend()
-    save("fig10_open_vs_closed.png")
+    axs[1].set_title("Fig 11b: Total population of the four districts"); axs[1].set_ylabel("Millions"); axs[1].legend()
+    save("fig11_open_vs_closed.png")
 
     fig, ax = plt.subplots(figsize=(10, 5)); xx = np.arange(n)
     ax.bar(xx - 0.2, from_x0 / 1e6, 0.4, color=[C[r] for r in REG], edgecolor="k", label="Descendants of 2011 residents")
     ax.bar(xx - 0.2, from_m / 1e6, 0.4, bottom=from_x0 / 1e6, color="white", edgecolor="k", hatch="//", label="Immigrants after 2011 (+ descendants)")
     ax.bar(xx + 0.2, X[0] / 1e6, 0.4, color="lightgray", edgecolor="k", label="2011 Census")
     ax.set_xticks(xx); ax.set_xticklabels(REG); ax.set_ylabel("Millions")
-    ax.set_title(f"Fig 11: Where the {years[-1]} population comes from  ($x_K = A^K x_0 + S_K m$)"); ax.legend()
-    save("fig11_growth_decomposition.png")
+    ax.set_title(f"Fig 12: Where the {years[-1]} population comes from  ($x_K = A^K x_0 + S_K m$)"); ax.legend()
+    save("fig12_growth_decomposition.png")
 
     fig, axs = plt.subplots(1, 2, figsize=(13, 4.8))
     axs[0].bar(xx - 0.2, m_full / 1e3, 0.4, color="#D55E00", edgecolor="k", label="Simulated P at full strength")
     axs[0].bar(xx + 0.2, m / 1e3, 0.4, color="#009E73", edgecolor="k", label=f"Calibrated, alpha = {alpha:.3f}")
     axs[0].axhline(0, color="k"); axs[0].set_xticks(xx); axs[0].set_xticklabels(REG)
-    axs[0].set_ylabel("Thousand people / year"); axs[0].set_title("Fig 12a: Immigration needed to match Census 2011"); axs[0].legend(fontsize=9)
+    axs[0].set_ylabel("Thousand people / year"); axs[0].set_title("Fig 10a: Immigration needed to match Census 2011"); axs[0].legend(fontsize=9)
     axs[1].bar(xx - 0.2, 100 * pi, 0.4, color=[C[r] for r in REG], edgecolor="k", label="Closed steady state")
     axs[1].bar(xx + 0.2, 100 * v, 0.4, color=[C[r] for r in REG], edgecolor="k", hatch="//", label="Open: Perron vector of A")
     axs[1].set_xticks(xx); axs[1].set_xticklabels(REG); axs[1].set_ylabel("Long-run share (%)")
-    axs[1].set_title("Fig 12b: Long-run shares, closed vs open"); axs[1].legend(fontsize=9)
-    save("fig12_calibration_and_longrun.png")
+    axs[1].set_title("Fig 10b: Long-run shares, closed vs open"); axs[1].legend(fontsize=9)
+    save("fig10_calibration_and_longrun.png")
 
 
 if __name__ == "__main__":

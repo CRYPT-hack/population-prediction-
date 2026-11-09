@@ -16,7 +16,7 @@ A = diag(1+g) P diag(1-e)
 ```bash
 pip install -r requirements.txt
 python project_code.py        # closed model  -> figures/fig1..9, results/results.json|txt
-python open_system.py         # open model    -> figures/fig10..12, results/open_system.json|txt
+python open_system.py         # open model    -> figures/fig10..12 (calibration, forecast, growth decomposition), results/open_system.json|txt
 python -m pytest -q           # 27 tests
 ```
 Add `--no-figures` for a fast run. Open `docs/index.html` in a browser for the interactive dashboard
