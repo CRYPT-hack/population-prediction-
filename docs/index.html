@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
+<title>NCR Transition Matrix Lab</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: control column (matrix + parameters) beside a results column; stacks to one column on phones. */
+:root{
+  --bg:#f5f7f9; --panel:#ffffff; --ink:#15212b; --muted:#5b6b78; --line:#d6dee5; --accent:#0b6e8a; --warn:#b3261e; --ok:#1e7d4f;
+  --delhi:#0072B2; --gurugram:#E69F00; --noida:#009E73; --faridabad:#CC79A7;
+  --f-display:"Archivo",system-ui,sans-serif; --f-body:"Atkinson Hyperlegible",system-ui,sans-serif; --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e161c; --panel:#16222b; --ink:#e4ecf1; --muted:#93a5b2; --line:#2a3a46; --accent:#4cc3e0; --warn:#ff8a80; --ok:#6fd3a0;
+  --delhi:#4aa8e8; --gurugram:#f0b23a; --noida:#2ec497; --faridabad:#e39bc6; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e161c; --panel:#16222b; --ink:#e4ecf1; --muted:#93a5b2; --line:#2a3a46; --accent:#4cc3e0; --warn:#ff8a80; --ok:#6fd3a0;
+  --delhi:#4aa8e8; --gurugram:#f0b23a; --noida:#2ec497; --faridabad:#e39bc6; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px 48px}
+.wrap{max-width:1180px;margin:0 auto;display:grid;gap:20px}
+header{display:grid;gap:6px}
+h1{font-family:var(--f-display);font-stretch:80%;font-weight:800;font-size:clamp(28px,4vw,40px);line-height:1.05;margin:0;text-wrap:balance;letter-spacing:-.01em}
+h2{font-family:var(--f-display);font-stretch:85%;font-weight:700;font-size:17px;margin:0;letter-spacing:.01em}
+.sub{color:var(--muted);max-width:70ch;margin:0}
+.eq{font-family:var(--f-mono);font-size:13px;color:var(--accent)}
+.grid{display:grid;grid-template-columns:minmax(0,470px) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:12px;min-width:0}
+.col{display:grid;gap:20px;min-width:0}
+.label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;flex-wrap:wrap}
+.seg button{font:inherit;font-size:13px;background:transparent;color:var(--ink);border:0;padding:6px 12px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--panel)}
+.seg button:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.mx{overflow-x:auto}
+table{border-collapse:collapse;font-family:var(--f-mono);font-size:12.5px;font-variant-numeric:tabular-nums;width:100%}
+th,td{padding:4px 4px;text-align:center}
+th{font-family:var(--f-body);font-weight:700;font-size:11.5px;color:var(--muted)}
+th.r{text-align:left}
+td input{width:100%;min-width:64px;font:inherit;text-align:right;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:5px;padding:3px 5px}
+td.diag{font-weight:600}
+td.bad{color:var(--warn)}
+.sw{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:baseline}
+.slider{display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center}
+.slider input[type=range]{grid-column:1/3;width:100%;accent-color:var(--accent)}
+.val{font-family:var(--f-mono);font-size:13px;font-variant-numeric:tabular-nums}
+.params td input{min-width:72px}
+th.r{white-space:nowrap}
+.msg{font-size:13px;padding:8px 10px;border-radius:6px;border:1px solid var(--warn);color:var(--warn)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.stat{display:grid;gap:2px;border-left:3px solid var(--line);padding:2px 10px}
+.stat b{font-family:var(--f-mono);font-size:20px;font-weight:600;font-variant-numeric:tabular-nums}
+.stat span{font-size:12px;color:var(--muted)}
+svg{display:block;width:100%;height:auto}
+svg text{fill:var(--muted);font-family:var(--f-mono);font-size:11px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px}
+.note{font-size:12.5px;color:var(--muted);max-width:75ch}
+.pill{display:inline-block;font-size:11px;padding:1px 7px;border-radius:99px;border:1px solid currentColor}
+.pill.ok{color:var(--ok)} .pill.bad{color:var(--warn)}
+button.reset{font:inherit;font-size:13px;background:transparent;color:var(--accent);border:1px solid var(--accent);border-radius:7px;padding:5px 10px;cursor:pointer}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <h1>NCR Transition Matrix Lab</h1>
+    <p class="sub">Change how people move between Delhi, Gurugram, Noida and Faridabad and watch the long-run distribution, the eigenvalues and the 2011&ndash;2061 projection update live. Columns are &ldquo;from&rdquo;, rows are &ldquo;to&rdquo;; each column sums to 1, so the diagonal (people who stay) is filled in for you.</p>
+    <div class="eq" id="eqline">x<sub>k+1</sub> = P x<sub>k</sub></div>
+  </header>
+
+  <div class="grid">
+    <div class="col">
+      <section class="panel" aria-labelledby="h-model">
+        <h2 id="h-model">Model</h2>
+        <div class="row">
+          <div class="seg" role="group" aria-label="Model type">
+            <button id="m-closed" aria-pressed="true">Closed system</button>
+            <button id="m-open" aria-pressed="false">Open (births, deaths, migration)</button>
+          </div>
+        </div>
+        <div class="row">
+          <span class="label">Preset</span>
+          <div class="seg" role="group" aria-label="Preset" id="presets">
+            <button data-p="base" aria-pressed="true">Baseline</button>
+            <button data-p="A" aria-pressed="false">A: Faridabad infra</button>
+            <button data-p="B" aria-pressed="false">B: Job boom</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="h-p">
+        <div class="row" style="justify-content:space-between"><h2 id="h-p">Transition matrix P</h2><button class="reset" id="reset">Reset</button></div>
+        <div class="mx"><table id="ptable"></table></div>
+        <div class="slider">
+          <label for="alpha">Mobility scale &alpha; &nbsp;<span class="note">P<sub>&alpha;</sub> = I + &alpha;(P &minus; I)</span></label>
+          <span class="val" id="alpha-v"></span>
+          <input type="range" id="alpha" min="0.02" max="1" step="0.01" value="1">
+        </div>
+        <p class="note">&alpha; keeps the same steady state but slows the journey: each eigenvalue becomes 1 + &alpha;(&lambda; &minus; 1). Census 2001&rarr;2011 supports only about &alpha; = 0.14 (see open_system.py).</p>
+        <div id="err" class="msg" hidden></div>
+      </section>
+
+      <section class="panel" aria-labelledby="h-open" id="openpanel" hidden>
+        <h2 id="h-open">Open-system parameters</h2>
+        <div class="mx"><table class="params" id="otable"></table></div>
+        <p class="note">Growth = SRS 2020 birth rate &minus; death rate (state level). Emigration is simulated. Immigration is calibrated so that Census 2001 grows into Census 2011 exactly at &alpha; = 0.137.</p>
+      </section>
+    </div>
+
+    <div class="col">
+      <section class="panel" aria-labelledby="h-res">
+        <h2 id="h-res">Long run</h2>
+        <div class="stats" id="stats"></div>
+        <svg id="bars" viewBox="0 0 640 210" role="img" aria-label="Census 2011 shares versus long-run shares"></svg>
+        <div class="legend"><span><span class="sw" style="background:var(--muted);opacity:.35"></span>Census 2011 share</span><span><span class="sw" style="background:var(--ink)"></span>Long-run share</span></div>
+      </section>
+
+      <section class="panel" aria-labelledby="h-proj">
+        <div class="row" style="justify-content:space-between">
+          <h2 id="h-proj">Projection</h2>
+          <div class="seg" role="group" aria-label="Units">
+            <button id="u-people" aria-pressed="true">People</button>
+            <button id="u-share" aria-pressed="false">Share %</button>
+          </div>
+        </div>
+        <svg id="lines" viewBox="0 0 640 300" role="img" aria-label="Population projection by region"></svg>
+        <div class="legend" id="leg"></div>
+      </section>
+
+      <section class="panel" aria-labelledby="h-eig">
+        <h2 id="h-eig">Eigenvalues</h2>
+        <svg id="eig" viewBox="0 0 640 90" role="img" aria-label="Eigenvalues on the real axis"></svg>
+        <p class="note" id="eignote"></p>
+      </section>
+    </div>
+  </div>
+  <p class="note">Transition probabilities are simulated for a course project (MTH2802, Group 14). Populations are Census 2011 district totals (Gurugram = Gurgaon district, Noida = Gautam Buddha Nagar). This is a teaching model, not an official forecast.</p>
+</div>
+
+<script>
+const R=["Delhi","Gurugram","Noida","Faridabad"], N=4, COL=["--delhi","--gurugram","--noida","--faridabad"];
+const POP=[16787941,1514432,1648115,1809733];
+const PRESETS={
+  base:[[.950,.060,.060,.070],[.020,.890,.030,.030],[.020,.030,.890,.020],[.010,.020,.020,.880]],
+  A:[[.945,.050,.050,.045],[.020,.890,.030,.020],[.020,.030,.890,.015],[.015,.030,.030,.920]],
+  B:[[.920,.040,.040,.050],[.035,.920,.025,.040],[.035,.025,.920,.030],[.010,.015,.015,.880]]};
+const OPEN0={g:[.0106,.0138,.0186,.0138],e:[.006,.008,.008,.007],m:[293386,21143,0,31852]};
+const S={P:clone(PRESETS.base),alpha:1,open:false,unit:"people",g:[...OPEN0.g],e:[...OPEN0.e],m:[...OPEN0.m]};
+const K=50, Y0=2011;
+function clone(M){return M.map(r=>[...r])}
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const $=id=>document.getElementById(id);
+const fmt=(x,d=2)=>x.toLocaleString("en-IN",{minimumFractionDigits:d,maximumFractionDigits:d});
+
+/* ---------- linear algebra ---------- */
+const mv=(A,x)=>A.map(r=>r.reduce((s,a,j)=>s+a*x[j],0));
+function scaled(P,a){return P.map((r,i)=>r.map((v,j)=>(i===j?1:0)+a*(v-(i===j?1:0))))}
+function gauss(A,b){A=clone(A);b=[...b];const n=b.length;
+  for(let c=0;c<n;c++){let p=c;for(let r=c+1;r<n;r++)if(Math.abs(A[r][c])>Math.abs(A[p][c]))p=r;
+    if(Math.abs(A[p][c])<1e-14)return null;[A[c],A[p]]=[A[p],A[c]];[b[c],b[p]]=[b[p],b[c]];
+    for(let r=c+1;r<n;r++){const f=A[r][c]/A[c][c];for(let j=c;j<n;j++)A[r][j]-=f*A[c][j];b[r]-=f*b[c]}}
+  const x=Array(n).fill(0);for(let r=n-1;r>=0;r--){let s=b[r];for(let j=r+1;j<n;j++)s-=A[r][j]*x[j];x[r]=s/A[r][r]}return x}
+function steady(P){const A=P.map((r,i)=>r.map((v,j)=>v-(i===j?1:0)));A[N-1]=Array(N).fill(1);const b=Array(N).fill(0);b[N-1]=1;return gauss(A,b)}
+/* eigenvalues: characteristic polynomial (Faddeev-LeVerrier) + Durand-Kerner roots; robust for complex pairs */
+function eigvals(M){const n=M.length;const c=Array(n+1).fill(0);c[n]=1;let Mk=Array.from({length:n},()=>Array(n).fill(0));
+  for(let k=1;k<=n;k++){const AM=mul(M,Mk);Mk=AM.map((r,i)=>r.map((v,j)=>v+(i===j?c[n-k+1]:0)));const AMk=mul(M,Mk);
+    let tr=0;for(let i=0;i<n;i++)tr+=AMk[i][i];c[n-k]=-tr/k}
+  const cm=(a,b)=>[a[0]*b[0]-a[1]*b[1],a[0]*b[1]+a[1]*b[0]],cd=(a,b)=>{const d=b[0]*b[0]+b[1]*b[1];return[(a[0]*b[0]+a[1]*b[1])/d,(a[1]*b[0]-a[0]*b[1])/d]};
+  const p=z=>{let r=[c[n],0];for(let k=n-1;k>=0;k--){r=cm(r,z);r[0]+=c[k]}return r};
+  let z=Array.from({length:n},(_,k)=>{const t=0.4+0.9*k;return[0.9*Math.cos(t),0.9*Math.sin(t)]});
+  for(let it=0;it<500;it++){let moved=0;z=z.map((zi,i)=>{let den=[1,0];z.forEach((zj,j)=>{if(j!==i)den=cm(den,[zi[0]-zj[0],zi[1]-zj[1]])});
+      const d=cd(p(zi),den);moved=Math.max(moved,Math.hypot(...d));return[zi[0]-d[0],zi[1]-d[1]]});if(moved<1e-15)break}
+  return z.map(v=>[v[0],Math.abs(v[1])<1e-9?0:v[1]]).sort((x,y)=>Math.hypot(y[0],y[1])-Math.hypot(x[0],x[1])||y[0]-x[0])}
+function mul(A,B){return A.map(r=>B[0].map((_,j)=>r.reduce((s,a,k)=>s+a*B[k][j],0)))}
+function openA(P,g,e){return P.map((r,i)=>r.map((v,j)=>(1+g[i])*v*(1-e[j])))}
+function perron(A){let x=Array(N).fill(1/N),rho=1;for(let k=0;k<3000;k++){const y=mv(A,x);rho=y.reduce((s,v)=>s+v,0);x=y.map(v=>v/rho)}return {rho,v:x}}
+
+/* ---------- UI: matrix ---------- */
+function buildTable(){
+  const t=$("ptable");let h='<tr><th class="r">to \\ from</th>'+R.map((r,j)=>`<th><span class="sw" style="background:var(${COL[j]})"></span>${r}</th>`).join("")+"</tr>";
+  for(let i=0;i<N;i++){h+=`<tr><th class="r"><span class="sw" style="background:var(${COL[i]})"></span>${R[i]}</th>`;
+    for(let j=0;j<N;j++){h+= i===j?`<td class="diag" id="d${j}"></td>`:`<td><input id="p${i}${j}" type="number" min="0" max="1" step="0.005" aria-label="P from ${R[j]} to ${R[i]}"></td>`}h+="</tr>"}
+  h+='<tr><th class="r">column sum</th>'+R.map((_,j)=>`<td id="cs${j}"></td>`).join("")+"</tr>";t.innerHTML=h;
+  for(let i=0;i<N;i++)for(let j=0;j<N;j++)if(i!==j)$(`p${i}${j}`).addEventListener("input",ev=>{const v=parseFloat(ev.target.value);S.P[i][j]=isFinite(v)?Math.max(0,v):0;fixDiag();update()});
+  const o=$("otable");let g='<tr><th class="r"></th><th>Growth %/yr</th><th>Leave NCR %/yr</th><th>Arrivals /yr</th></tr>';
+  R.forEach((r,i)=>{g+=`<tr><th class="r"><span class="sw" style="background:var(${COL[i]})"></span>${r}</th><td><input id="g${i}" type="number" step="0.1"></td><td><input id="e${i}" type="number" step="0.1" min="0"></td><td><input id="m${i}" type="number" step="1000" min="0"></td></tr>`});o.innerHTML=g;
+  R.forEach((_,i)=>{$(`g${i}`).addEventListener("input",ev=>{S.g[i]=(parseFloat(ev.target.value)||0)/100;update()});
+    $(`e${i}`).addEventListener("input",ev=>{S.e[i]=Math.min(.99,Math.max(0,(parseFloat(ev.target.value)||0)/100));update()});
+    $(`m${i}`).addEventListener("input",ev=>{S.m[i]=Math.max(0,parseFloat(ev.target.value)||0);update()})})}
+function fixDiag(){for(let j=0;j<N;j++){let s=0;for(let i=0;i<N;i++)if(i!==j)s+=S.P[i][j];S.P[j][j]=1-s}}
+function syncInputs(){for(let i=0;i<N;i++)for(let j=0;j<N;j++)if(i!==j)$(`p${i}${j}`).value=S.P[i][j].toFixed(3);
+  R.forEach((_,i)=>{$(`g${i}`).value=(100*S.g[i]).toFixed(2);$(`e${i}`).value=(100*S.e[i]).toFixed(2);$(`m${i}`).value=Math.round(S.m[i])});
+  $("alpha").value=S.alpha}
+
+/* ---------- drawing ---------- */
+function bars(s0,pi){const W=640,H=210,top=24,bot=30,bw=52,gap=(W-40)/N;const mx=niceMax(Math.max(...s0,...pi,.1)*1.12);let h="";
+  for(let k=0;k<=4;k++){const v=mx*k/4,y=H-bot-(H-top-bot)*k/4;h+=`<line x1="34" x2="${W}" y1="${y}" y2="${y}" stroke="var(--line)"/><text x="30" y="${y+4}" text-anchor="end">${(100*v).toFixed(0)}%</text>`}
+  R.forEach((r,i)=>{const cx=40+gap*i+gap/2,c=`var(${COL[i]})`;[[s0[i],-bw/2-3,.35],[pi[i],3+bw/2,1]].forEach(([v,dx,op],q)=>{
+    const hh=(H-top-bot)*v/mx,x=cx+dx-bw/2;h+=`<rect x="${x}" y="${H-bot-hh}" width="${bw}" height="${hh}" fill="${c}" fill-opacity="${op}"/>`+
+    `<text x="${x+bw/2}" y="${H-bot-hh-5}" text-anchor="middle" style="fill:var(--ink)">${(100*v).toFixed(1)}</text>`});
+    h+=`<text x="${cx}" y="${H-10}" text-anchor="middle" style="fill:var(--ink);font-family:var(--f-body);font-size:12px">${r}</text>`});
+  $("bars").innerHTML=h}
+function lines(X,Xc){const W=640,H=300,l=56,r=12,t=14,b=30;const share=S.unit==="share";
+  const tr=M=>share?M.map(row=>{const s=row.reduce((a,v)=>a+v,0);return row.map(v=>100*v/s)}):M.map(row=>row.map(v=>v/1e6));
+  const A=tr(X),C=Xc?tr(Xc):null;let mx=0;[A,C].forEach(M=>M&&M.forEach(rw=>rw.forEach(v=>mx=Math.max(mx,v))));mx=niceMax(mx);
+  const px=k=>l+(W-l-r)*k/K,py=v=>H-b-(H-t-b)*v/mx;let h="";
+  for(let k=0;k<=5;k++){const v=mx*k/5;h+=`<line x1="${l}" x2="${W-r}" y1="${py(v)}" y2="${py(v)}" stroke="var(--line)"/><text x="${l-6}" y="${py(v)+4}" text-anchor="end">${share?v.toFixed(0)+"%":v.toFixed(v<10?1:0)+"M"}</text>`}
+  for(let k=0;k<=K;k+=10)h+=`<text x="${px(k)}" y="${H-10}" text-anchor="middle">${Y0+k}</text>`;
+  for(let i=0;i<N;i++){const c=`var(${COL[i]})`;if(C)h+=`<polyline fill="none" stroke="${c}" stroke-width="1.5" stroke-dasharray="4 4" points="${C.map((rw,k)=>px(k)+","+py(rw[i])).join(" ")}"/>`;
+    h+=`<polyline fill="none" stroke="${c}" stroke-width="2.6" points="${A.map((rw,k)=>px(k)+","+py(rw[i])).join(" ")}"/>`;
+    h+=`<circle cx="${px(K)}" cy="${py(A[K][i])}" r="3.5" fill="${c}"/>`}
+  $("lines").innerHTML=h;
+  $("leg").innerHTML=R.map((r,i)=>`<span><span class="sw" style="background:var(${COL[i]})"></span>${r} <span class="val">${share?A[K][i].toFixed(1)+"%":A[K][i].toFixed(2)+"M"}</span> in ${Y0+K}</span>`).join("")+(C?'<span class="note">dashed = closed model</span>':"")}
+function niceMax(v){const p=Math.pow(10,Math.floor(Math.log10(v)));for(const m of [1,1.5,2,2.5,3,4,5,6,8,10])if(m*p>=v)return m*p;return v}
+function eigplot(ev,ref){const W=640,H=90,l=20,r=20;const lo=Math.min(0.5,...ev.map(e=>e[0]))-.02,hi=1.04;const px=x=>l+(W-l-r)*(x-lo)/(hi-lo);let h="";
+  h+=`<line x1="${l}" x2="${W-r}" y1="50" y2="50" stroke="var(--muted)"/>`;
+  for(let x=Math.ceil(lo*10)/10;x<=1.0001;x+=.1)h+=`<line x1="${px(x)}" x2="${px(x)}" y1="46" y2="54" stroke="var(--muted)"/><text x="${px(x)}" y="70" text-anchor="middle">${x.toFixed(1)}</text>`;
+  h+=`<line x1="${px(ref)}" x2="${px(ref)}" y1="20" y2="56" stroke="var(--accent)" stroke-dasharray="3 3"/>`;
+  ev.forEach((e,i)=>{const cpx=Math.abs(e[1])>1e-9;h+=`<circle cx="${px(e[0])}" cy="${50-(cpx?Math.sign(e[1])*8:0)}" r="6" fill="${i===0?"var(--warn)":"var(--accent)"}" stroke="var(--panel)" stroke-width="1.5"><title>λ${i+1} = ${e[0].toFixed(4)}${cpx?(e[1]>0?"+":"−")+Math.abs(e[1]).toFixed(4)+"i":""}</title></circle>`});
+  h+=`<text x="${px(ref)}" y="14" text-anchor="middle" style="fill:var(--accent)">${ref===1?"λ = 1":"ρ(A) = "+ref.toFixed(4)}</text>`;$("eig").innerHTML=h}
+
+/* ---------- main update ---------- */
+function update(){
+  for(let j=0;j<N;j++){$(`d${j}`).textContent=S.P[j][j].toFixed(3);$(`d${j}`).classList.toggle("bad",S.P[j][j]<0);
+    $(`cs${j}`).textContent=S.P.reduce((s,r)=>s+r[j],0).toFixed(3)}
+  $("alpha-v").textContent=S.alpha.toFixed(2);
+  const bad=S.P.some((r,i)=>r[i]<0);const err=$("err");
+  if(bad){err.hidden=false;err.textContent="A column's outflows add up to more than 1, so its diagonal (people who stay) is negative. Lower some numbers in that column.";return}
+  err.hidden=true;
+  const P=scaled(S.P,S.alpha),tot=POP.reduce((a,v)=>a+v,0),s0=POP.map(v=>v/tot);
+  const X=[POP],Xc=[POP];let A=null,m=S.m;
+  if(S.open)A=openA(P,S.g,S.e);
+  for(let k=0;k<K;k++){Xc.push(mv(P,Xc[k]));if(S.open){const y=mv(A,X[k]);X.push(y.map((v,i)=>v+m[i]))}}
+  const pi=steady(P);let ev,longrun,stats;
+  const evP=eigvals(P),lam2=evP.length>1?Math.hypot(evP[1][0],evP[1][1]):0;
+  let k1=null,x=s0;for(let k=0;k<=400;k++){if(x.reduce((s,v,i)=>s+Math.abs(v-pi[i]),0)<.01){k1=k;break}x=mv(P,x)}
+  if(!S.open){ev=evP;longrun=pi;
+    stats=[[fmt(lam2,4),"|λ₂| controls speed"],[k1===null?"> 400":k1+" yrs","to get within 1% of steady state"],[lam2>0&&lam2<1?fmt(Math.log(.5)/Math.log(lam2),1)+" yrs":"–","half-life of slowest mode"],[(100*Math.min(...pi)).toFixed(1)+"%","smallest long-run share"]];
+    $("eqline").innerHTML="x<sub>k+1</sub> = P<sub>α</sub> x<sub>k</sub> &nbsp;·&nbsp; total fixed at "+fmt(tot/1e6)+" M";eigplot(ev,1)}
+  else{const pr=perron(A);ev=eigvals(A);longrun=pr.v;const last=X[K].reduce((a,v)=>a+v,0);
+    stats=[[fmt(100*(pr.rho-1),3)+"%","long-run growth per year (ρ(A) − 1)"],[fmt(last/1e6)+" M",`total population in ${Y0+K}`],[fmt(X[10].reduce((a,v)=>a+v,0)/1e6)+" M",`total in ${Y0+10}`],[fmt(m.reduce((a,v)=>a+v,0)/1e3,0)+"k","arrivals per year"]];
+    $("eqline").innerHTML="x<sub>k+1</sub> = A x<sub>k</sub> + m, &nbsp; A = diag(1+g) P<sub>α</sub> diag(1−e)";eigplot(ev,pr.rho)}
+  $("stats").innerHTML=stats.map(([b,s])=>`<div class="stat"><b>${b}</b><span>${s}</span></div>`).join("");
+  bars(s0,longrun);lines(S.open?X:Xc,S.open?Xc:null);
+  const reg=S.P.every(r=>r.every(v=>v>0));
+  $("eignote").innerHTML=(S.open?`Open model: the dominant eigenvalue ρ(A) sets the growth rate and its Perron vector gives the long-run shares (bars above). `:`λ₁ = 1 always, because columns sum to 1. The others shrink like |λ|<sup>k</sup>, so |λ₂| sets how fast the population settles. `)+
+    `P is ${reg?'<span class="pill ok">regular</span> (all entries positive), so the long-run state is unique.':'<span class="pill bad">not strictly positive</span>: the steady state may not be unique.'}`}
+
+/* ---------- events ---------- */
+function setPressed(group,btn){group.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",String(b===btn)))}
+$("presets").addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b)return;S.P=clone(PRESETS[b.dataset.p]);setPressed($("presets"),b);syncInputs();update()});
+$("m-closed").onclick=()=>{S.open=false;setPressed($("m-closed").parentNode,$("m-closed"));$("openpanel").hidden=true;S.alpha=1;syncInputs();update()};
+$("m-open").onclick=()=>{S.open=true;setPressed($("m-open").parentNode,$("m-open"));$("openpanel").hidden=false;S.alpha=0.137;syncInputs();update()};
+$("u-people").onclick=()=>{S.unit="people";setPressed($("u-people").parentNode,$("u-people"));update()};
+$("u-share").onclick=()=>{S.unit="share";setPressed($("u-share").parentNode,$("u-share"));update()};
+$("alpha").addEventListener("input",ev=>{S.alpha=parseFloat(ev.target.value);update()});
+$("reset").onclick=()=>{S.P=clone(PRESETS.base);S.g=[...OPEN0.g];S.e=[...OPEN0.e];S.m=[...OPEN0.m];S.alpha=S.open?0.137:1;setPressed($("presets"),$("presets").firstElementChild);syncInputs();update()};
+buildTable();syncInputs();update();
+</script>
+</body>
+</html>
