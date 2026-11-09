@@ -1,0 +1,227 @@
+==============================================================================
+1. TRANSITION MATRIX P (SIMULATED, column-stochastic)
+==============================================================================
+              from Delhi  from Gurugram  from Noida  from Faridabad
+to Delhi            0.95           0.06        0.06            0.07
+to Gurugram         0.02           0.89        0.03            0.03
+to Noida            0.02           0.03        0.89            0.02
+to Faridabad        0.01           0.02        0.02            0.88
+[PASS] Every column of P sums to 1
+[PASS] Column sums equal 1 when rounded to 3 decimals
+[PASS] All entries of P are non-negative
+[PASS] All entries of P strictly positive (so P^1 > 0)
+[PASS] Retention (diagonal) lies in [0.88, 0.96]
+[PASS] Regularity: smallest k with P^k > 0 is k = 1
+
+Total initial population (approx.) = 21,786,473;  initial shares = [0.7706 0.0695 0.0769 0.0831]
+
+==============================================================================
+HAND-CHECKABLE EXAMPLE: population of Gurugram after 1 year
+==============================================================================
+x_1[Gurugram] = sum_j P[Gurugram][j] * x_0[j]
+   from Delhi     : 0.020 x   16,787,941 =      335,758.8
+   from Gurugram  : 0.890 x    1,514,085 =    1,347,535.6
+   from Noida     : 0.030 x    1,674,714 =       50,241.4
+   from Faridabad : 0.030 x    1,809,733 =       54,292.0
+   TOTAL = 1,787,827.9  (people in Gurugram after 1 year)
+[PASS] Hand-calculation of x_1[Gurugram] matches P @ x_0
+[PASS] Total population conserved after 1 step (closed system)
+
+==============================================================================
+2. PROJECTIONS x_{k+1} = P x_k
+==============================================================================
+ k (years)  Delhi (persons)  Gurugram (persons)  Noida (persons)  Faridabad (persons)
+         0         16787941             1514085          1674714              1809733
+         1         16266553             1787828          1907871              1824220
+         2         15802663             2028461          2113456              1841893
+         5         14696386             2589839          2595438              1904811
+        10         13532662             3157162          3085853              2010797
+        20         12528941             3618544          3485929              2153059
+        30         12221876             3750675          3599354              2214569
+
+Shares in percent:
+ k (years)  Delhi (%)  Gurugram (%)  Noida (%)  Faridabad (%)
+         0      77.06          6.95       7.69           8.31
+         1      74.66          8.21       8.76           8.37
+         2      72.53          9.31       9.70           8.45
+         5      67.46         11.89      11.91           8.74
+        10      62.11         14.49      14.16           9.23
+        20      57.51         16.61      16.00           9.88
+        30      56.10         17.22      16.52          10.16
+[PASS] Total population constant for all k = 0..30
+[PASS] Shares sum to 1 for all k
+
+MATRIX POWERS (columns converge to the same vector):
+
+P^2 =
+[[0.9056 0.1136 0.1136 0.1311]
+ [0.0377 0.7948 0.0552 0.0551]
+ [0.0376 0.055  0.7946 0.0377]
+ [0.0191 0.0366 0.0366 0.7761]]
+   largest difference between columns in any row = 7.92e-01
+
+P^5 =
+[[0.8001 0.2424 0.2424 0.2717]
+ [0.0795 0.5793 0.1088 0.1082]
+ [0.0787 0.1074 0.5778 0.0794]
+ [0.0417 0.071  0.071  0.5408]]
+   largest difference between columns in any row = 5.58e-01
+
+P^10 =
+[[0.6898 0.3796 0.3796 0.4097]
+ [0.1227 0.3742 0.1529 0.1514]
+ [0.1203 0.149  0.3703 0.1218]
+ [0.0671 0.0972 0.0972 0.3171]]
+   largest difference between columns in any row = 3.10e-01
+
+P^50 =
+[[0.5559 0.5533 0.5533 0.554 ]
+ [0.1742 0.1755 0.175  0.1748]
+ [0.167  0.1676 0.1681 0.1671]
+ [0.1028 0.1036 0.1036 0.104 ]]
+   largest difference between columns in any row = 2.67e-03
+[PASS] Columns of P^50 are (almost) identical
+
+==============================================================================
+3. STEADY STATE (three methods)
+==============================================================================
+Method (b): replace the last equation of (P-I)pi = 0 by pi1+pi2+pi3+pi4 = 1.
+Augmented matrix [A | b] BEFORE elimination:
+     -0.0500     0.0600     0.0600     0.0700  |     0.0
+      0.0200    -0.1100     0.0300     0.0300  |     0.0
+      0.0200     0.0300    -0.1100     0.0200  |     0.0
+      1.0000     1.0000     1.0000     1.0000  |     1.0
+Row-echelon form [A | b] after forward elimination:
+     1.00000    1.00000    1.00000    1.00000  |    1.00000
+     0.00000   -0.13000    0.01000    0.01000  |   -0.02000
+     0.00000    0.00000   -0.12923    0.00077  |   -0.02154
+     0.00000    0.00000    0.00000    0.12917  |    0.01333
+  (a) eigenvector     : Delhi 0.55483871  Gurugram 0.17465438  Noida 0.16728111  Faridabad 0.10322581
+  (b) linear system   : Delhi 0.55483871  Gurugram 0.17465438  Noida 0.16728111  Faridabad 0.10322581
+  (c) P^200 column    : Delhi 0.55483871  Gurugram 0.17465438  Noida 0.16728111  Faridabad 0.10322581
+[PASS] Steady state: eigenvector method == linear-system method (<1e-8)
+[PASS] Steady state: eigenvector method == P^200 method (<1e-8)
+[PASS] Steady state: linear-system method == P^200 method (<1e-8)
+[PASS] P pi = pi holds
+[PASS] No region collapses below 5% (smallest share = 10.32%)
+
+==============================================================================
+4. EIGEN-DECOMPOSITION  P = V D V^-1
+==============================================================================
+[PASS] All eigenvalues are real
+[PASS] All eigenvalues are distinct
+[PASS] Eigenvalues separated by more than 1e-3
+Eigenvalues: 1.000000, 0.886180, 0.863820, 0.860000
+Eigenvectors (columns of V):
+[[ 0.55484  0.86145  0.175   -0.     ]
+ [ 0.17465 -0.32905 -0.45816  0.70711]
+ [ 0.16728 -0.20336  0.74132 -0.70711]
+ [ 0.10323 -0.32905 -0.45816  0.     ]]
+Reconstruction error max|V D V^-1 - P| = 4.44e-16
+[PASS] P = V D V^-1 reconstruction error < 1e-12
+[PASS] Largest eigenvalue is exactly 1 (lambda_1 = 1)
+[PASS] Eigenvector for lambda = 1 equals the steady state
+[PASS] Other eigenvectors have components summing to 0
+P^10 via V D^10 V^-1 vs matrix_power: max error = 5.00e-15
+[PASS] P^10 = V D^10 V^-1 matches np.linalg.matrix_power(P,10)
+
+Decomposition of the initial SHARE vector: x_0 = c1 v1 + c2 v2 + c3 v3 + c4 v4
+   c1 =  1.000000   (lambda_1 = 1.000000, lambda^30 = 1.000e+00)
+   c2 =  0.282736   (lambda_2 = 0.886180, lambda^30 = 2.665e-02)
+   c3 = -0.159058   (lambda_3 = 0.863820, lambda^30 = 1.238e-02)
+   c4 = -0.120206   (lambda_4 = 0.860000, lambda^30 = 1.084e-02)
+[PASS] x_0 = sum c_j v_j reconstruction
+[PASS] c1 = 1 for a share vector (total population share)
+Why: x_k = c1 (1)^k v1 + c2 (l2)^k v2 + ...; since |l2|,|l3|,|l4| < 1 those terms -> 0, only c1 v1 = steady state survives.
+
+==============================================================================
+5. CONVERGENCE SPEED
+==============================================================================
+|lambda_2| = 0.886180;  L1 distance d_k = sum_i |x_k,i - pi_i| (shares)
+d_0 = 0.43146; fitted constant C = d_20/|l2|^20 = 0.45374
+Years until d_k < 1%   : actual 32,  theoretical ceil(ln(0.01/C)/ln|l2|) = 32
+Years until d_k < 0.1% : actual 51, theoretical ceil(ln(0.001/C)/ln|l2|) = 51
+[PASS] Actual convergence times agree with |lambda_2|^k theory (within 2 years)
+
+==============================================================================
+6. DIFFERENT STARTING POINTS -> SAME LIMIT
+==============================================================================
+  Census-based (approx.) share after 120 yrs: [0.554839 0.174654 0.167281 0.103226]
+[PASS] Start 'Census-based (approx.)' converges to the steady state
+  All in Delhi           share after 120 yrs: [0.554839 0.174654 0.167281 0.103226]
+[PASS] Start 'All in Delhi' converges to the steady state
+  Uniform (25% each)     share after 120 yrs: [0.554839 0.174654 0.167281 0.103226]
+[PASS] Start 'Uniform (25% each)' converges to the steady state
+  All in Faridabad       share after 120 yrs: [0.554839 0.174654 0.167281 0.103226]
+[PASS] Start 'All in Faridabad' converges to the steady state
+
+==============================================================================
+7. SCENARIO ANALYSIS (all SIMULATED what-if changes)
+==============================================================================
+[PASS] Scenario 'Baseline': valid column-stochastic, positive, retention in range
+[PASS] Scenario 'Baseline': eigenvalues real
+[PASS] Scenario 'Baseline': smallest steady share 10.32% > 5%
+
+Baseline: P =
+[[0.95 0.06 0.06 0.07]
+ [0.02 0.89 0.03 0.03]
+ [0.02 0.03 0.89 0.02]
+ [0.01 0.02 0.02 0.88]]
+[PASS] Scenario 'A: Faridabad infrastructure': valid column-stochastic, positive, retention in range
+[PASS] Scenario 'A: Faridabad infrastructure': eigenvalues real
+[PASS] Scenario 'A: Faridabad infrastructure': smallest steady share 15.86% > 5%
+
+A: Faridabad infrastructure: P =
+[[0.945 0.05  0.05  0.045]
+ [0.02  0.89  0.03  0.02 ]
+ [0.02  0.03  0.89  0.015]
+ [0.015 0.03  0.03  0.92 ]]
+[PASS] Scenario 'B: Gurugram/Noida job boom': valid column-stochastic, positive, retention in range
+[PASS] Scenario 'B: Gurugram/Noida job boom': eigenvalues real
+[PASS] Scenario 'B: Gurugram/Noida job boom': smallest steady share 9.85% > 5%
+
+B: Gurugram/Noida job boom: P =
+[[0.92  0.04  0.04  0.05 ]
+ [0.035 0.92  0.025 0.04 ]
+ [0.035 0.025 0.92  0.03 ]
+ [0.01  0.015 0.015 0.88 ]]
+
+                   Scenario Delhi (%) Gurugram (%) Noida (%) Faridabad (%) |lambda_2|
+                   Baseline     55.48        17.47     16.73         10.32     0.8862
+A: Faridabad infrastructure     46.62        16.60     15.86         20.92     0.9015
+ B: Gurugram/Noida job boom     34.15        28.47     27.53          9.85     0.8950
+
+==============================================================================
+8. SENSITIVITY ANALYSIS (1000 random +/-2% perturbations)
+==============================================================================
+   Region  Baseline %  Mean %  Std %  Min %  Max %
+    Delhi      55.484  55.466  0.388 54.360 56.680
+ Gurugram      17.465  17.475  0.236 16.738 18.201
+    Noida      16.728  16.732  0.230 15.944 17.494
+Faridabad      10.323  10.326  0.144  9.949 10.742
+Largest deviation of any share from baseline over all 1000 runs = 1.196 percentage points
+|lambda_2| over runs: mean 0.8862, min 0.8835, max 0.8894
+[PASS] Steady-state shares stay within 3 percentage points of baseline under +/-2% perturbations (robust)
+
+==============================================================================
+9b. 2x2 TOY EXAMPLE  T = [[0.9, 0.2],[0.1, 0.8]]
+==============================================================================
+Characteristic equation: lambda^2 - (trace) lambda + det = lambda^2 - 1.7 lambda + 0.70 = 0
+   => lambda = 1.0 and 0.7
+lambda = 1: (T - I)v = 0 -> -0.1 a + 0.2 b = 0 -> a = 2b -> v1 = (2,1) -> normalised (2/3, 1/3)
+lambda = 0.7: (T - 0.7I)v = 0 -> 0.2 a + 0.2 b = 0 -> b = -a -> v2 = (1,-1)
+[PASS] Toy 2x2: eigenvalues are 1 and 0.7
+[PASS] Toy 2x2: steady state is (2/3, 1/3)
+Start (0.5,0.5): [0.5 0.5] -> [0.55 0.45] -> [0.585 0.415] -> [0.6095 0.3905]
+
+==============================================================================
+10. WHAT IF P IS NOT REGULAR?
+==============================================================================
+[PASS] Absorbing example is column-stochastic
+[PASS] Absorbing example is NOT regular (no power of it is strictly positive)
+Absorbing chain, start in state 1, after 200 steps: [3.00000e-06 4.00000e-06 9.99993e-01]  -> everybody ends in the absorbing state 3
+Periodic chain [[0,1],[1,0]]: eigenvalues [ 1.+0.j -1.+0.j]; start (1,0) -> [0.0, 1.0] , [1.0, 0.0] , [0.0, 1.0] , [1.0, 0.0]  (flips forever, no limit)
+
+==============================================================================
+ASSERTIONS PASSED: 45
+Figures saved in: /mnt/user-data/outputs/figures
