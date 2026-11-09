@@ -159,3 +159,47 @@ def half_life(lam2: float) -> float:
     return math.log(0.5) / math.log(lam2)
 
 
+# ----------------------------------------------------------------------------------------------
+# Projection & convergence
+# ----------------------------------------------------------------------------------------------
+def project(P: np.ndarray, x0: np.ndarray, K: int) -> np.ndarray:
+    """Rows are x_0 .. x_K."""
+    X = np.zeros((K + 1, len(x0)))
+    X[0] = x0
+    for k in range(K):
+        X[k + 1] = P @ X[k]
+    return X
+
+
+def distance_curve(P: np.ndarray, start: np.ndarray, pi: np.ndarray, kmax: int = 120) -> np.ndarray:
+    """L1 distance d_k = sum_i |x_k,i - pi_i| between the share vector and the steady state."""
+    x = np.asarray(start, dtype=float)
+    d = []
+    for _ in range(kmax + 1):
+        d.append(np.abs(x - pi).sum())
+        x = P @ x
+    return np.array(d)
+
+
+def first_below(dist: np.ndarray, thr: float) -> int | None:
+    """First k with dist[k] < thr.
+
+    BUG FIX: the original used int(np.argmax(dist < thr)), which returns 0 (='converged
+    immediately') when the threshold is NEVER reached. Now we return None in that case."""
+    hits = np.flatnonzero(dist < thr)
+    return int(hits[0]) if hits.size else None
+
+
+def convergence_constant_theory(eig: Eigen, start_share: np.ndarray) -> float:
+    """C in d_k ~ C |lambda_2|^k, computed from the eigen-decomposition: C = ||c_2 v_2||_1.
+
+    BUG FIX: the original 'theory' fitted C from the simulated curve itself (C = d_20/|l2|^20),
+    so comparing 'theory vs actual' was partly circular. This value uses only V^-1 x_0."""
+    c = eig.Vinv @ start_share
+    return float(np.abs(c[1] * eig.V[:, 1]).sum())
+
+
+def years_to_threshold(C: float, lam2: float, thr: float) -> int:
+    return max(0, math.ceil(math.log(thr / C) / math.log(lam2)))
+
+
