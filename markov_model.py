@@ -113,3 +113,49 @@ def steady_state_power(P: np.ndarray, k: int = 200) -> np.ndarray:
     return np.linalg.matrix_power(P, k)[:, 0]
 
 
+# ----------------------------------------------------------------------------------------------
+# Spectrum
+# ----------------------------------------------------------------------------------------------
+@dataclass
+class Eigen:
+    values: np.ndarray        # sorted by |lambda| descending
+    V: np.ndarray             # columns = eigenvectors (v1 sums to 1, others unit length)
+    Vinv: np.ndarray
+
+
+def eigendecomposition(P: np.ndarray) -> Eigen:
+    """P = V D V^-1 with eigenvalues sorted by MODULUS.
+
+    BUG FIX: the original sorted by the real value (np.argsort(-w)). For a matrix with a
+    negative eigenvalue such as -0.95 this puts it last, so |lambda_2| (convergence speed)
+    was read from the wrong eigenvalue. Sorting by modulus is what the theory needs.
+    """
+    w, V = np.linalg.eig(P)
+    if np.allclose(w.imag, 0) and np.allclose(V.imag, 0):
+        w, V = w.real, V.real
+    order = np.lexsort((-np.real(w), -abs(w)))   # by |lambda|, ties broken by real part
+    w, V = w[order], V[:, order].copy()
+    for j in range(V.shape[1]):
+        if j == 0 and abs(V[:, 0].sum()) > 1e-12:
+            V[:, 0] = V[:, 0] / V[:, 0].sum()
+        else:
+            V[:, j] = V[:, j] / np.linalg.norm(V[:, j])
+            first = int(np.argmax(abs(V[:, j]) > 1e-12))
+            if np.real(V[first, j]) < 0:
+                V[:, j] *= -1
+    if np.linalg.cond(V) > 1e12:
+        raise np.linalg.LinAlgError("P is (numerically) not diagonalisable")
+    return Eigen(w, V, np.linalg.inv(V))
+
+
+def second_eigenvalue_modulus(P: np.ndarray) -> float:
+    ev = np.linalg.eigvals(P)
+    ev = ev[np.argsort(-abs(ev))]
+    return float(abs(ev[1]))
+
+
+def half_life(lam2: float) -> float:
+    """Years for the slowest transient mode to halve."""
+    return math.log(0.5) / math.log(lam2)
+
+
