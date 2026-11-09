@@ -96,7 +96,7 @@ A: Faridabad retention 0.88 → 0.92 and more inflow; its steady share goes 10.3
 We multiplied entries by random factors in [0.98, 1.02] 1000 times and renormalised. Each share varied by a standard deviation of at most 0.39 percentage points: the result is robust to small errors, but not to the large structural changes of the scenarios.
 
 **Q24. How did you verify the code?**
-Two kinds of check: mathematical facts must hold (columns sum to 1, regularity up to Wielandt's bound, three steady-state methods agree to 1e-8, V D V⁻¹ rebuilds P with error 6e-16, P^10 matches, totals conserved); design choices (retention range, shares above 5%) only warn. 43 checks pass with 0 warnings, and 27 automated tests (pytest) run on every GitHub push.
+Two kinds of check: mathematical facts must hold (columns sum to 1, regularity up to Wielandt's bound, three steady-state methods agree to 1e-8, V D V⁻¹ rebuilds P with error 6e-16, P^10 matches, totals conserved); design choices (retention range, shares above 5%) only warn. 43 checks pass with 0 warnings, and 31 automated tests (pytest) run on every GitHub push.
 
 **Q25. Explain the 2×2 example.**
 T = [[0.9, 0.2],[0.1, 0.8]] has λ = 1 and 0.7 (trace 1.7, det 0.7). v₁ = (2,1) ⇒ steady state (2/3, 1/3). v₂ = (1,−1). T^n → [[2/3,2/3],[1/3,1/3]] since 0.7^n → 0.

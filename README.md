@@ -30,10 +30,10 @@ Add `--no-figures` for a fast run. Open `docs/index.html` in a browser for the i
 | `markov_model.py` | Pure linear-algebra functions: validation, regularity, 3 steady-state methods, diagonalisation, convergence, sensitivity, open-system matrix, homogeneous coordinates, calibration, Perron vector |
 | `project_code.py` | Closed-system analysis (the original project, bugs fixed) |
 | `open_system.py` | Open-system extension and calibration against the census |
-| `tests/` | Unit tests + regression test against the original submission's numbers |
+| `tests/` | Unit tests, a regression test against the original submission's numbers, and checks that the report, slides and viva notes quote the current results |
 | `docs/index.html` | Interactive dashboard (no install; works offline except fonts) |
 | `BUGFIXES.md` | Every bug fixed, and why |
-| `submission/` | The original Group 14 submission: report (.docx/.pdf), slides, viva notes, original script and figures. Its projection tables use the old census figures |
+| `submission/` | Report (.docx/.pdf, 22 pages), 10 slides and viva notes, **updated** to match this code; also the original script and figures for comparison. The version handed in is tag `v1.0-submission` |
 
 ## Key results
 

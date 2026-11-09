@@ -15,7 +15,7 @@ The original `project_code.py` and the full Group 14 submission are kept unchang
 | 9 | Colours, flow-diagram positions and figure 6 layout hard-coded for 4 named regions | `KeyError` on any renamed / extra region | Generic palette, circular layout, adaptive subplot grid (tested) |
 | 10 | Fixed axis limits (fig 4 `ylim 85`, fig 9 `xlim 0.84..1.03`) | Bars / eigenvalues could fall off the plot after editing P | Limits computed from data; fig 9 now shows the complex plane and unit circle with a zoom inset |
 | 11 | `warnings.filterwarnings("ignore")`, unused `np.random.seed`, rounding P to 3 decimals in results.json | Hidden problems; lost precision | Removed; P stored with 6 decimals |
-| 12 | Everything in one 400-line script | Nothing testable or reusable | `markov_model.py` (pure functions) + scripts + 27 pytest tests |
+| 12 | Everything in one 400-line script | Nothing testable or reusable | `markov_model.py` (pure functions) + scripts + 31 pytest tests |
 
 ## Modelling finding (not a code bug, but important)
 
