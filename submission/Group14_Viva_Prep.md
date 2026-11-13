@@ -16,10 +16,10 @@ We diagonalised P = V D V⁻¹. The eigenvalues are 1.0000, 0.8862, 0.8638, 0.86
 
 Different starting points reach the same steady state. Two scenarios (Faridabad infrastructure; Gurugram/Noida job boom) change the steady state a lot, while ±2% random errors change it by at most 1.20 percentage points. Limits: closed system, constant P, memoryless, simulated data.
 
-Finally we opened the system: births and deaths (SRS 2020), people leaving the NCR and people arriving, x_(k+1) = A x_k + m. Fitting the arrivals to Census 2001 and 2011 showed that our simulated P moves about seven times too many people (α = 0.137). The open model gives about 36.8 million people in the four districts by 2041.
+Finally we opened the system: births and deaths (SRS 2020), people leaving the NCR and people arriving, x_(k+1) = A x_k + m. Fitting the arrivals to Census 2001 and 2011 showed that our simulated P moves about seven times too many people (α = 0.137). The open model gives about 36.8 million people in the four districts by 2041. Using the real Census 2011 migration table (D-02) instead, movement between the regions turns out to be about 100 times smaller than our simulated P; the census-data model matches Delhi's net migration from the Economic Survey reasonably well and gives about 33.7 million by 2041.
 
 ---
-## Part 2 – 32 likely viva questions with model answers
+## Part 2 – 38 likely viva questions with model answers
 
 ### A. Matrices and stochastic properties
 **Q1. What is a transition matrix? How is yours arranged?**
@@ -123,6 +123,25 @@ P_α π = π + α(Pπ − π) = π. Each eigenvalue maps to 1 + α(λ − 1), so
 **Q32. Which bugs did you fix in the original code?**
 Wrong census figures for Gurugram and Noida; eigenvalues sorted by real part instead of modulus (wrong |λ₂| for a negative eigenvalue); "years to converge" returned 0 when a threshold was never reached; the "theory" constant was fitted from the same curve it predicted; no zero-pivot check in Gaussian elimination; design choices written as hard assertions so any edit crashed the script.
 
+### G. Census data (new)
+**Q33. Where does the real migration data come from?**
+Census 2011 table D-02: migrants by place of last residence and duration of residence. People who had lived in a district for less than one year moved there in the previous year, so they give yearly flows. Example: 10,906 people in Gurgaon district had moved from Delhi within the year, so P[Gurugram][Delhi] = 10,906 / 16,787,941 = 0.00065.
+
+**Q34. What could not be measured directly, and how did you handle it?**
+D-02 names only the origin state for flows into Delhi and between the suburbs (for example "from Haryana"). We split those by population share, times a proximity factor w, and checked w = 1, 2, 4. The 2041 forecast changes by under 1%, but the closed steady state changes a lot (Delhi 32%–66%), so it is not identified by the data.
+
+**Q35. How different is the real P from your simulated P?**
+Off-diagonal entries are 31–431 times smaller (median 111). About 0.06–0.13% of each region moves to another of the four each year, not 5–12%. |λ₂| becomes 0.99927: half-life about 945 years and about 3,400 years to get within 1% of the steady state.
+
+**Q36. How did you fit emigration, and why Newton's method?**
+x₂₀₁₁ depends non-linearly on the emigration rates e (they sit inside A, which is raised to the 10th power). Newton's method linearises: e ← e − J⁻¹f(e), with the Jacobian J from finite differences and each step a 4×4 system solved by Gaussian elimination. It converges in 5 iterations.
+
+**Q37. How do you know the census-data model is any good?**
+We compared Delhi's modelled net migration with the Economic Survey of Delhi 2014–15, which the model never used: 0.93 vs 0.69 lakh a year on average, closest in 2010–2011 when D-02 was measured. Most of the gap (0.20 of 0.24 lakh) comes from the survey using registered births and deaths (CRS) instead of SRS.
+
+**Q38. What did you do to make the code more efficient?**
+The 1000-run sensitivity analysis builds all perturbed matrices as one array and calls one batched eigen-decomposition (one per matrix instead of two): 55 ms → 5 ms with identical results. Plotting libraries are imported only when figures are drawn, so a run without figures takes about 0.5 s instead of 1.7 s.
+
 ---
 ## Part 3 – Numbers to remember
 
@@ -142,6 +161,7 @@ Wrong census figures for Gurugram and Noida; eigenvalues sorted by real part ins
 **Convergence:** within 1% after 32 years; within 0.1% after 51 years (theory 33 / 52).
 **Scenario steady states:** A (Delhi/Gur/Noi/Far) 46.6% / 16.6% / 15.9% / 20.9%; B 34.2% / 28.5% / 27.5% / 9.8%.
 **Sensitivity:** max deviation 1.20 percentage points.
+**Census data (D-02):** real moves 31–431× smaller than P · |λ₂| = 0.99927 · ~3,400 yrs to settle · Newton fit of emigration in 5 iterations · Delhi net migration 0.93 (model) vs 0.69 (survey) lakh/yr · 33.7 M in 2041.
 **Open model:** α = 0.137 · arrivals 346,381/yr · ρ(A) = 1.00626 (+0.63%/yr) · 36.78 M in 2041 · long-run shares 49.8 / 17.4 / 21.8 / 11.0%.
 
 ---
