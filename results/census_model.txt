@@ -1,0 +1,99 @@
+[PASS] Census 2011 populations in inputs.py match the Primary Census Abstract file
+
+==============================================================================
+1. CENSUS-BASED TRANSITION MATRIX (D-02, migrants resident < 1 year)
+==============================================================================
+Yearly flows F[i, j] (people moving from column j to row i):
+              from Delhi  from Gurugram  from Noida  from Faridabad
+to Delhi             0.0         1048.0       822.0          1252.0
+to Gurugram      10906.0            0.0       115.0           593.0
+to Noida          5896.0          105.0         0.0           126.0
+to Faridabad      5365.0          226.0        86.0             0.0
+
+How each flow was obtained:
+    Gurugram -> Delhi    : 0.0597 x from Haryana
+       Noida -> Delhi    : 0.0082 x from Uttar Pradesh
+   Faridabad -> Delhi    : 0.0714 x from Haryana
+       Delhi -> Gurugram : direct
+       Noida -> Gurugram : 0.0082 x from Uttar Pradesh
+   Faridabad -> Gurugram : 0.0759 x other districts of Haryana
+       Delhi -> Noida    : direct
+    Gurugram -> Noida    : 0.0597 x from Haryana
+   Faridabad -> Noida    : 0.0714 x from Haryana
+       Delhi -> Faridabad: direct
+    Gurugram -> Faridabad: 0.0643 x other districts of Haryana
+       Noida -> Faridabad: 0.0082 x from Uttar Pradesh
+
+Census-based P_c (ncr_weight = 1):
+              Delhi  Gurugram     Noida  Faridabad
+Delhi      0.998680  0.000692  0.000499   0.000692
+Gurugram   0.000650  0.999089  0.000070   0.000328
+Noida      0.000351  0.000070  0.999379   0.000070
+Faridabad  0.000320  0.000149  0.000052   0.998911
+[PASS] P_c is strictly positive, hence regular
+
+Simulated P / census P_c, off-diagonal: min 31x, median 111x, max 431x
+Share of each region moving to the other three per year: Delhi 0.132%, Gurugram 0.091%, Noida 0.062%, Faridabad 0.109%  (simulated P: 5-12%)
+Arrivals per year from outside the four regions, m = Delhi 244,268, Gurugram 55,133, Noida 45,658, Faridabad 24,374
+
+Robustness (allocation weight w, and 'moved last year' vs 'moved 1-4 years ago' / 4):
+   w=1, moved_last_year         steady state [32.2, 30.0, 23.2, 14.7]%  |lambda_2| = 0.99927
+   w=1, moved_1_4_years         steady state [32.9, 26.6, 23.8, 16.7]%  |lambda_2| = 0.99926
+   w=2, moved_last_year         steady state [48.7, 22.7, 17.5, 11.1]%  |lambda_2| = 0.99855
+   w=2, moved_1_4_years         steady state [49.5, 20.0, 17.9, 12.6]%  |lambda_2| = 0.99854
+   w=4, moved_last_year         steady state [65.5, 15.3, 11.8, 7.5]%  |lambda_2| = 0.99719
+   w=4, moved_1_4_years         steady state [66.2, 13.4, 11.9, 8.4]%  |lambda_2| = 0.99718
+
+==============================================================================
+2. HOW LONG WOULD THE CLOSED MODEL TAKE TO SETTLE WITH REAL MOBILITY?
+==============================================================================
+Eigenvalues of P_c: 1.000000, 0.999267, 0.998761, 0.998030
+|lambda_2| = 0.999267  ->  half-life 945 years
+Years to come within 1% of the steady state: census P_c 3,398  vs simulated P 32
+The steady state itself is NOT pinned down by the data: Delhi's long-run share ranges 32%-66% across the allocation assumptions.
+[PASS] With census mobility the closed model needs over a thousand years to settle
+
+==============================================================================
+3. OPEN MODEL ON CENSUS DATA: fit emigration to Census 2001 -> 2011 (Newton)
+==============================================================================
+Natural growth g (SRS 2001-2010 average, state level): Delhi 1.34%, Gurugram 1.76%, Noida 2.13%, Faridabad 1.76%
+Newton converged in 5 iterations: e = Delhi 0.88%, Gurugram 1.75%, Noida 2.49%, Faridabad 0.68%
+[PASS] Back-cast 2001 -> 2011 reproduces Census 2011
+[PASS] Fitted emigration rates are between 0% and 5% a year
+Noida and Gurugram need the highest emigration because state-wide (UP, Haryana) birth rates overstate
+the natural growth of these urban districts; emigration absorbs that difference.
+
+==============================================================================
+4. INDEPENDENT CHECK: Delhi's net migration vs Economic Survey of Delhi 2014-15
+==============================================================================
+ Year  Model (lakh)  Economic Survey (lakh)
+ 2002          1.06                    0.55
+ 2003          1.03                    0.63
+ 2004          1.00                    0.61
+ 2005          0.97                    0.56
+ 2006          0.95                    0.69
+ 2007          0.92                    0.77
+ 2008          0.89                    0.78
+ 2009          0.86                    0.67
+ 2010          0.83                    0.81
+ 2011          0.80                    0.81
+Average: model 0.93 lakh/yr, survey 0.69 lakh/yr. They agree best in 2010-2011,
+the years the D-02 flows were measured; earlier, the model assumes the 2011 arrival numbers held all decade.
+The survey's natural increase comes from CRS registrations (14.7 per 1000) while the model uses SRS
+(13.4 per 1000). That difference alone is 0.20 lakh/yr of the 0.24 lakh/yr gap.
+[PASS] Model and survey net migration agree within a factor of 2
+
+==============================================================================
+5. FORECAST 2011 -> 2041: census-based vs simulated-P open model
+==============================================================================
+ Year Delhi Gurugram Noida Faridabad Total (census P) Total (simulated P)
+ 2011 16.79     1.51  1.65      1.81            21.76               21.76
+ 2021 19.33     2.10  2.04      2.23            25.70               26.49
+ 2031 21.89     2.68  2.41      2.69            29.66               31.49
+ 2041 24.46     3.25  2.76      3.18            33.65               36.78
+2041 total for allocation weights w=1: 33.65 M, w=2: 33.74 M, w=4: 33.92 M
+[PASS] 2041 forecast changes by under 2% across allocation weights
+
+==============================================================================
+CHECKS PASSED: 7   DESIGN WARNINGS: 0
+==============================================================================
