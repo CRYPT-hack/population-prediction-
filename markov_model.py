@@ -341,3 +341,31 @@ def calibrate_mobility(P, emigration, growth, x_start, x_end, years, tol=1e-6):
             hi = mid
     m, A = m_of(lo)
     return lo, m, A
+
+
+# ----------------------------------------------------------------------------------------------
+# Calibrating emigration with Newton's method
+# ----------------------------------------------------------------------------------------------
+def calibrate_emigration(P, growth, m, x_start, x_end, years, e0=None, tol=1e-12, max_iter=50):
+    """Find emigration rates e (one per region) such that x_start grows into x_end in `years` steps of
+    x -> A(e) x + m,  A(e) = diag(1+g) P diag(1-e).
+
+    x_end depends non-linearly on e, so we use Newton's method: at each step build the Jacobian
+    J[i, k] = d x_end[i] / d e_k by finite differences and solve the 4x4 linear system J de = -f(e)
+    with our own Gaussian elimination. Returns (e, iterations)."""
+    def f(e):
+        return project_open(open_system_matrix(P, e, growth), m, x_start, years)[-1] - x_end
+    n = len(x_start)
+    e = np.full(n, 0.005) if e0 is None else np.array(e0, float)
+    for it in range(1, max_iter + 1):
+        f0 = f(e)
+        J = np.zeros((n, n))
+        for k in range(n):
+            h = 1e-7
+            ek = e.copy(); ek[k] += h
+            J[:, k] = (f(ek) - f0) / h
+        de = gauss_solve(J, -f0)
+        e = e + de
+        if np.max(abs(de)) < tol:
+            return e, it
+    raise RuntimeError("Newton iteration for emigration did not converge")
