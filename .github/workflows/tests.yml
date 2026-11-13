@@ -13,4 +13,4 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - run: pip install -r requirements.txt
       - run: python -m pytest -q
-      - run: python project_code.py --no-figures && python open_system.py --no-figures
+      - run: python run_all.py --no-figures
