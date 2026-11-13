@@ -94,6 +94,7 @@ button.reset{font:inherit;font-size:13px;background:transparent;color:var(--acce
             <button data-p="base" aria-pressed="true">Baseline</button>
             <button data-p="A" aria-pressed="false">A: Faridabad infra</button>
             <button data-p="B" aria-pressed="false">B: Job boom</button>
+            <button data-p="C" aria-pressed="false">Census 2011 data</button>
           </div>
         </div>
       </section>
@@ -106,7 +107,7 @@ button.reset{font:inherit;font-size:13px;background:transparent;color:var(--acce
           <span class="val" id="alpha-v"></span>
           <input type="range" id="alpha" min="0.02" max="1" step="0.01" value="1">
         </div>
-        <p class="note">&alpha; keeps the same steady state but slows the journey: each eigenvalue becomes 1 + &alpha;(&lambda; &minus; 1). Census 2001&rarr;2011 supports only about &alpha; = 0.14 (see open_system.py).</p>
+        <p class="note">&alpha; keeps the same steady state but slows the journey: each eigenvalue becomes 1 + &alpha;(&lambda; &minus; 1). Census 2001&rarr;2011 supports only about &alpha; = 0.14 (see open_system.py). The &ldquo;Census 2011 data&rdquo; preset uses the real D-02 migration flows, which are about 100 times smaller still.</p>
         <div id="err" class="msg" hidden></div>
       </section>
 
@@ -153,7 +154,10 @@ const POP=[16787941,1514432,1648115,1809733];
 const PRESETS={
   base:[[.950,.060,.060,.070],[.020,.890,.030,.030],[.020,.030,.890,.020],[.010,.020,.020,.880]],
   A:[[.945,.050,.050,.045],[.020,.890,.030,.020],[.020,.030,.890,.015],[.015,.030,.030,.920]],
-  B:[[.920,.040,.040,.050],[.035,.920,.025,.040],[.035,.025,.920,.030],[.010,.015,.015,.880]]};
+  B:[[.920,.040,.040,.050],[.035,.920,.025,.040],[.035,.025,.920,.030],[.010,.015,.015,.880]],
+  C:[[0.99868, 0.000692, 0.000499, 0.000692], [0.00065, 0.999089, 7e-05, 0.000328], [0.000351, 7e-05, 0.999379, 7e-05], [0.00032, 0.000149, 5.2e-05, 0.998911]]};
+const CENSUS_OPEN={e:[0.00883, 0.0175, 0.02491, 0.00682],m:[244268, 55133, 45658, 24374]};  /* Census D-02 arrivals, emigration fitted to Census 2001->2011 */
+const fp=v=>Math.abs(v)<0.01||Math.abs(1-v)<0.01?v.toFixed(5):v.toFixed(3);
 const OPEN0={g:[.0106,.0138,.0186,.0138],e:[.006,.008,.008,.007],m:[293386,21143,0,31852]};
 const S={P:clone(PRESETS.base),alpha:1,open:false,unit:"people",g:[...OPEN0.g],e:[...OPEN0.e],m:[...OPEN0.m]};
 const K=50, Y0=2011;
@@ -189,7 +193,7 @@ function perron(A){let x=Array(N).fill(1/N),rho=1;for(let k=0;k<3000;k++){const 
 function buildTable(){
   const t=$("ptable");let h='<tr><th class="r">to \\ from</th>'+R.map((r,j)=>`<th><span class="sw" style="background:var(${COL[j]})"></span>${r}</th>`).join("")+"</tr>";
   for(let i=0;i<N;i++){h+=`<tr><th class="r"><span class="sw" style="background:var(${COL[i]})"></span>${R[i]}</th>`;
-    for(let j=0;j<N;j++){h+= i===j?`<td class="diag" id="d${j}"></td>`:`<td><input id="p${i}${j}" type="number" min="0" max="1" step="0.005" aria-label="P from ${R[j]} to ${R[i]}"></td>`}h+="</tr>"}
+    for(let j=0;j<N;j++){h+= i===j?`<td class="diag" id="d${j}"></td>`:`<td><input id="p${i}${j}" type="number" min="0" max="1" step="any" aria-label="P from ${R[j]} to ${R[i]}"></td>`}h+="</tr>"}
   h+='<tr><th class="r">column sum</th>'+R.map((_,j)=>`<td id="cs${j}"></td>`).join("")+"</tr>";t.innerHTML=h;
   for(let i=0;i<N;i++)for(let j=0;j<N;j++)if(i!==j)$(`p${i}${j}`).addEventListener("input",ev=>{const v=parseFloat(ev.target.value);S.P[i][j]=isFinite(v)?Math.max(0,v):0;fixDiag();update()});
   const o=$("otable");let g='<tr><th class="r"></th><th>Growth %/yr</th><th>Leave NCR %/yr</th><th>Arrivals /yr</th></tr>';
@@ -198,7 +202,7 @@ function buildTable(){
     $(`e${i}`).addEventListener("input",ev=>{S.e[i]=Math.min(.99,Math.max(0,(parseFloat(ev.target.value)||0)/100));update()});
     $(`m${i}`).addEventListener("input",ev=>{S.m[i]=Math.max(0,parseFloat(ev.target.value)||0);update()})})}
 function fixDiag(){for(let j=0;j<N;j++){let s=0;for(let i=0;i<N;i++)if(i!==j)s+=S.P[i][j];S.P[j][j]=1-s}}
-function syncInputs(){for(let i=0;i<N;i++)for(let j=0;j<N;j++)if(i!==j)$(`p${i}${j}`).value=S.P[i][j].toFixed(3);
+function syncInputs(){for(let i=0;i<N;i++)for(let j=0;j<N;j++)if(i!==j)$(`p${i}${j}`).value=fp(S.P[i][j]);
   R.forEach((_,i)=>{$(`g${i}`).value=(100*S.g[i]).toFixed(2);$(`e${i}`).value=(100*S.e[i]).toFixed(2);$(`m${i}`).value=Math.round(S.m[i])});
   $("alpha").value=S.alpha}
 
@@ -231,7 +235,7 @@ function eigplot(ev,ref){const W=640,H=90,l=20,r=20;const lo=Math.min(0.5,...ev.
 
 /* ---------- main update ---------- */
 function update(){
-  for(let j=0;j<N;j++){$(`d${j}`).textContent=S.P[j][j].toFixed(3);$(`d${j}`).classList.toggle("bad",S.P[j][j]<0);
+  for(let j=0;j<N;j++){$(`d${j}`).textContent=fp(S.P[j][j]);$(`d${j}`).classList.toggle("bad",S.P[j][j]<0);
     $(`cs${j}`).textContent=S.P.reduce((s,r)=>s+r[j],0).toFixed(3)}
   $("alpha-v").textContent=S.alpha.toFixed(2);
   const bad=S.P.some((r,i)=>r[i]<0);const err=$("err");
@@ -243,9 +247,9 @@ function update(){
   for(let k=0;k<K;k++){Xc.push(mv(P,Xc[k]));if(S.open){const y=mv(A,X[k]);X.push(y.map((v,i)=>v+m[i]))}}
   const pi=steady(P);let ev,longrun,stats;
   const evP=eigvals(P),lam2=evP.length>1?Math.hypot(evP[1][0],evP[1][1]):0;
-  let k1=null,x=s0;for(let k=0;k<=400;k++){if(x.reduce((s,v,i)=>s+Math.abs(v-pi[i]),0)<.01){k1=k;break}x=mv(P,x)}
+  let k1=null,x=s0;for(let k=0;k<=6000;k++){if(x.reduce((s,v,i)=>s+Math.abs(v-pi[i]),0)<.01){k1=k;break}x=mv(P,x)}
   if(!S.open){ev=evP;longrun=pi;
-    stats=[[fmt(lam2,4),"|λ₂| controls speed"],[k1===null?"> 400":k1+" yrs","to get within 1% of steady state"],[lam2>0&&lam2<1?fmt(Math.log(.5)/Math.log(lam2),1)+" yrs":"–","half-life of slowest mode"],[(100*Math.min(...pi)).toFixed(1)+"%","smallest long-run share"]];
+    stats=[[fmt(lam2,4),"|λ₂| controls speed"],[k1===null?"> 6000":k1.toLocaleString("en-IN")+" yrs","to get within 1% of steady state"],[lam2>0&&lam2<1?fmt(Math.log(.5)/Math.log(lam2),1)+" yrs":"–","half-life of slowest mode"],[(100*Math.min(...pi)).toFixed(1)+"%","smallest long-run share"]];
     $("eqline").innerHTML="x<sub>k+1</sub> = P<sub>α</sub> x<sub>k</sub> &nbsp;·&nbsp; total fixed at "+fmt(tot/1e6)+" M";eigplot(ev,1)}
   else{const pr=perron(A);ev=eigvals(A);longrun=pr.v;const last=X[K].reduce((a,v)=>a+v,0);
     stats=[[fmt(100*(pr.rho-1),3)+"%","long-run growth per year (ρ(A) − 1)"],[fmt(last/1e6)+" M",`total population in ${Y0+K}`],[fmt(X[10].reduce((a,v)=>a+v,0)/1e6)+" M",`total in ${Y0+10}`],[fmt(m.reduce((a,v)=>a+v,0)/1e3,0)+"k","arrivals per year"]];
@@ -258,7 +262,7 @@ function update(){
 
 /* ---------- events ---------- */
 function setPressed(group,btn){group.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",String(b===btn)))}
-$("presets").addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b)return;S.P=clone(PRESETS[b.dataset.p]);setPressed($("presets"),b);syncInputs();update()});
+$("presets").addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b)return;S.P=clone(PRESETS[b.dataset.p]);if(b.dataset.p==="C"){S.alpha=1;S.e=[...CENSUS_OPEN.e];S.m=[...CENSUS_OPEN.m]}else{S.e=[...OPEN0.e];S.m=[...OPEN0.m];if(S.open)S.alpha=0.137}setPressed($("presets"),b);syncInputs();update()});
 $("m-closed").onclick=()=>{S.open=false;setPressed($("m-closed").parentNode,$("m-closed"));$("openpanel").hidden=true;S.alpha=1;syncInputs();update()};
 $("m-open").onclick=()=>{S.open=true;setPressed($("m-open").parentNode,$("m-open"));$("openpanel").hidden=false;S.alpha=0.137;syncInputs();update()};
 $("u-people").onclick=()=>{S.unit="people";setPressed($("u-people").parentNode,$("u-people"));update()};
