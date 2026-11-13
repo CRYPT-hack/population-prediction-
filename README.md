@@ -19,7 +19,7 @@ python run_all.py             # everything below, in one process, with timings
 python project_code.py        # closed model  -> figures/fig1..9, results/results.json|txt
 python open_system.py         # open model    -> figures/fig10..12 (calibration, forecast, growth decomposition), results/open_system.json|txt
 python census_model.py        # census data   -> figures/fig13..15, results/census_model.json|txt
-python -m pytest -q           # 38 tests
+python -m pytest -q           # 39 tests
 ```
 Add `--no-figures` for a fast run. Open `docs/index.html` in a browser for the interactive dashboard
 (edit P, switch closed/open, watch the steady state, eigenvalues and projection update).
@@ -39,7 +39,7 @@ Add `--no-figures` for a fast run. Open `docs/index.html` in a browser for the i
 | `tests/` | Unit tests, a regression test against the original submission's numbers, and checks that the report, slides and viva notes quote the current results |
 | `docs/index.html` | Interactive dashboard (no install; works offline except fonts) |
 | `BUGFIXES.md` | Every bug fixed, and why |
-| `submission/` | Report (.docx/.pdf, 22 pages), 10 slides and viva notes, **updated** to match this code; also the original script and figures for comparison. The version handed in is tag `v1.0-submission` |
+| `submission/` | Report (.docx/.pdf, 26 pages), 12 slides and viva notes, **updated** to match this code; also the original script and figures for comparison. The version handed in is tag `v1.0-submission` |
 
 ## Key results
 

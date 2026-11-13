@@ -53,3 +53,14 @@ def test_slides_and_viva_mention_current_results():
     assert "theory 33" in slides and "α = 0.137" in slides and "approximate" not in slides
     viva = (SUB / "Group14_Viva_Prep.md").read_text(encoding="utf-8")
     assert "21,760,221" in viva and "1,787,338.7" in viva and "0.137" in viva
+
+
+def test_documents_quote_census_data_results():
+    C = json.loads((ROOT / "results" / "census_model.json").read_text())
+    text = report_text()
+    assert f"{C['flows'][1][0]:,.0f}" in text                                   # Delhi -> Gurugram flow
+    assert f"{C['census_spectrum']['years_to_1pct_census']:,}" in text
+    total_2041 = sum(C["forecast"]["census_model"][-1]) / 1e6
+    assert f"{total_2041:.1f} million in 2041" in text
+    viva = (SUB / "Group14_Viva_Prep.md").read_text(encoding="utf-8")
+    assert f"{total_2041:.1f} M" in viva
