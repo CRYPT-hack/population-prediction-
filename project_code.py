@@ -20,18 +20,12 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-from matplotlib.patches import FancyArrowPatch, Patch
 
 import markov_model as mm
 import inputs
 
-try:
-    import seaborn as sns
-except ImportError:           # graceful fallback: heatmap drawn with matplotlib only
-    sns = None
+# matplotlib and seaborn take ~1 s to import, so they are imported only when figures are drawn
+# (see make_all_figures); `--no-figures` runs and the test-suite skip that cost.
 
 HERE = Path(__file__).resolve().parent
 
@@ -354,6 +348,14 @@ def run(P=None, initial_population=None, make_figures=True, outdir=HERE, quiet=F
 
 
 def make_all_figures(FIG, P, REGIONS, s0, pi, S, K, dist, Cth, lam2, traj, scen, sens, w):
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.patches import FancyArrowPatch, Patch
+    try:
+        import seaborn as sns
+    except ImportError:       # graceful fallback: heatmap drawn with matplotlib only
+        sns = None
     FIG.mkdir(parents=True, exist_ok=True)
     n = len(REGIONS); COLORS = region_colors(REGIONS); REG_COL = [COLORS[r] for r in REGIONS]
     plt.rcParams.update({"font.size": 11, "axes.titlesize": 13, "axes.labelsize": 11, "legend.fontsize": 10,

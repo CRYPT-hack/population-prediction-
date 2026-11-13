@@ -25,9 +25,6 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 
 import inputs
 import markov_model as mm
@@ -147,6 +144,9 @@ def run(make_figures=True, outdir=HERE, quiet=False, horizon=30):
 
 
 def figures(FIG, REG, years, X, Xc, from_x0, from_m, v, pi, alpha, m_full, m):
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
     FIG.mkdir(parents=True, exist_ok=True); C = region_colors(REG); n = len(REG)
     plt.rcParams.update({"font.size": 11, "axes.grid": True, "grid.alpha": 0.3})
 
